@@ -1,0 +1,120 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:uni_links/uni_links.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
+import 'package:http/http.dart' as http;
+
+
+var uuid = new Uuid(options: {
+  'grng': UuidUtil.cryptoRNG
+});
+
+Future main() async {
+  await DotEnv().load('.env');
+  
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.green
+      ),
+      home: MyHomePage(title: 'Playlist For Two'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  
+  var stateKey = uuid.v4(options: {
+  'rng': UuidUtil.cryptoRNG
+  });
+
+
+
+  initState() {
+    super.initState();
+    initUriListener();
+  }
+
+  getToken(code) async {
+    var payload = {"code": "$code"};
+    var response = await http.post('http://127.0.0.1:5000/login-user', body: payload);
+    print(response.body);
+  }
+
+  initUriListener() async {
+
+    getUriLinksStream().listen((Uri uri) {
+      if (uri?.queryParameters['state'] == stateKey) {
+        var code = uri?.queryParameters['code'];
+        getToken(code);
+        closeWebView();
+      }
+
+    }, onError: (err) {
+      print('got err: $err');
+    });
+  }
+
+  void _logInPage()  async {
+  var clientId = DotEnv().env['SPOTIFY_CLIENT_ID'];
+  var redirectUri = DotEnv().env['SPOTIFY_REDIRECT_URI'];
+  var scopes = "user-library-read user-top-read user-read-private playlist-read-collaborative playlist-modify-private";
+
+  final url = Uri.encodeFull('https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&state=$stateKey&scopes=$scopes&show_dialog=true');
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+
+        title: Text(widget.title),
+      ),
+      body: Center(
+
+        child: Column(
+          
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+           
+            
+            RaisedButton(
+              onPressed: _logInPage,
+              child: Text('Log in with Spotify'),
+      ),
+          ],
+        ),
+      ),
+     
+    );
+  }
+}
