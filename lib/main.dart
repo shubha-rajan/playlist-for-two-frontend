@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
   void _logInPage()  async {
   var clientId = DotEnv().env['SPOTIFY_CLIENT_ID'];
   var redirectUri = DotEnv().env['SPOTIFY_REDIRECT_URI'];
-  var scopes = "user-library-read user-top-read user-read-private playlist-read-collaborative playlist-modify-private";
+  var scopes = "user-library-read user-read-recently-played user-top-read playlist-read-collaborative playlist-modify-private";
 
   final url = Uri.encodeFull('https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&state=$stateKey&scope=$scopes&show_dialog=true');
 
@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
               shape: StadiumBorder(),
               textColor: Colors.white,
               color:Colors.green, 
-              height: 60,
+              height: 50,
               minWidth:300
       ),
           ],
