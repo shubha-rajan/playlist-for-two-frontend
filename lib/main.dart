@@ -26,28 +26,29 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.green
+        primaryColor: Colors.green,
+        brightness: Brightness.dark,
       ),
-      home: MyHomePage(title: 'Playlist For Two'),
+      
+      home: LoginPage(title: 'Playlist For Two'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  LoginPage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LoginPageState extends State<LoginPage> {
   
   var stateKey = uuid.v4(options: {
   'rng': UuidUtil.cryptoRNG
   });
-
 
 
   initState() {
@@ -80,7 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
   var redirectUri = DotEnv().env['SPOTIFY_REDIRECT_URI'];
   var scopes = "user-library-read user-top-read user-read-private playlist-read-collaborative playlist-modify-private";
 
-  final url = Uri.encodeFull('https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&state=$stateKey&scopes=$scopes&show_dialog=true');
+  final url = Uri.encodeFull('https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&state=$stateKey&scope=$scopes&show_dialog=true');
+
 
     if (await canLaunch(url)) {
       await launch(url);
@@ -89,11 +91,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
 
@@ -102,14 +101,20 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
 
         child: Column(
-          
           mainAxisAlignment: MainAxisAlignment.center,
+          
           children: <Widget>[
-           
-            
-            RaisedButton(
+            Image.asset('graphics/logo-white.png', width:250),
+            MaterialButton(
               onPressed: _logInPage,
-              child: Text('Log in with Spotify'),
+              child: Text('Log in with Spotify',
+                style: TextStyle(fontSize: 20)
+              ),
+              shape: StadiumBorder(),
+              textColor: Colors.white,
+              color:Colors.green, 
+              height: 60,
+              minWidth:300
       ),
           ],
         ),
