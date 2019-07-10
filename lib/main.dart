@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -38,6 +39,24 @@ class MyApp extends StatelessWidget {
         '/home':(context) => HomePage()
       }
     );
+  }
+}
+
+class LoginHelper {
+
+  static Future<String> getLoggedInUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('UID') ?? false;
+  }
+
+  static Future<bool> setLoggedInUser(String id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('UID', id);
+  }
+
+  static Future<bool> clearLoggedInUser(String value)  async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.clear();
   }
 }
 
