@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,8 +30,11 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.green,
         brightness: Brightness.dark,
       ),
-      
-      home: LoginPage(title: 'Playlist For Two'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginPage(title:"Log In"),
+        '/home':(context) => HomePage()
+      }
     );
   }
 }
@@ -59,7 +63,12 @@ class _LoginPageState extends State<LoginPage> {
   getToken(code) async {
     var payload = {"code": "$code"};
     var response = await http.post('http://127.0.0.1:5000/login-user', body: payload);
-    print(response.body);
+    Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(name:json.decode(response.body)['name']),
+          ),
+    );
   }
 
   initUriListener() async {
@@ -120,6 +129,25 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
      
+    );
+  }
+}
+
+
+class HomePage extends StatelessWidget {
+  HomePage({Key key, this.name}) : super(key: key);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Playlist for Two"),
+      ),
+      body: Center(
+        child: Text('Welcome, $name!'),
+        ),
     );
   }
 }
