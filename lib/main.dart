@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 
 
@@ -116,11 +117,12 @@ class _LoginPageState extends State<LoginPage> {
     var response = await http.post('http://127.0.0.1:5000/login-user', body: payload);
     LoginHelper.setLoggedInUser(json.decode(response.body)['spotify_id']);
     LoginHelper.setUserName(json.decode(response.body)['name']);
-
+    print(json.decode(response.body)['image_links'][0]['url']);
+    LoginHelper.setUserPhoto(json.decode(response.body)['image_links'][0]['url']);
     Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(name: json.decode(response.body)['name']),
+            builder: (context) => HomePage(name: json.decode(response.body)['name'], imageUrl: json.decode(response.body)['image_links'][0]['url'],),
           ),
     );
   }
@@ -253,6 +255,11 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            CachedNetworkImage(
+                imageUrl: imageUrl,
+                placeholder: (context, url) => new CircularProgressIndicator(),
+                errorWidget: (context, url, error) => new Icon(Icons.error),
+            ),
             Text('Welcome, $name',
             style: TextStyle(fontSize: 50), textAlign: TextAlign.center,),
             MaterialButton(
