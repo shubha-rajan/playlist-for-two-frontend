@@ -22,24 +22,30 @@ Future main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+   @override
+  State<StatefulWidget> createState() {
+    return _MyAppState();
+  }
+}
 
+class _MyAppState extends State<MyApp> {
+
+  
   @override
   Widget build(BuildContext context) {
-    String initRoute;
-    LoginHelper.getLoggedInUser().then((user){
-      initRoute = (user=='') ? '/' : '/home';
-    });
+    
+  
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primaryColor: Colors.green,
         brightness: Brightness.dark,
       ),
-      initialRoute: initRoute,
+      initialRoute: '/',
       routes: {
-        '/': (context) => LoginPage(title:"Log In"),
+        '/': (context) => SplashPage(),
+        '/login': (context) => LoginPage(title:"Log In"),
         '/home':(context) => HomePage()
       }
     );
@@ -56,6 +62,7 @@ class LoginHelper {
   static Future<bool> setLoggedInUser(String id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString('UID', id);
+    
   }
 
   static Future<bool> clearLoggedInUser()  async {
@@ -159,20 +166,54 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
+class SplashPage extends StatefulWidget {
+  @override
+  _SplashPageState createState() => 
+new _SplashPageState();
+}
+class _SplashPageState extends State<SplashPage> {
+  getNextScreen() async {
+     String user = await LoginHelper.getLoggedInUser();
+      print(user);
+      String route = (user == '') ? '/login' : '/home';
+      return Navigator.pushReplacementNamed(context, route);
+  }
+  startTimer() async {
+    var _duration = new Duration(seconds: 2);
+    return new Timer(_duration, getNextScreen);
+  }
+  @override
+    void initState() {
+      super.initState();
+      startTimer();
+    }
+  @override
+  Widget build(BuildContext context) {
+  
+  return new Scaffold(
+      body: new Center(
+        child: new Image.asset('graphics/splash.png', width:250),
+        
+        ),
+      );
+  }
+}
+
 
 class HomePage extends StatelessWidget {
+
 
   @override
   Widget build(BuildContext context) {
 
     void _logOutUser() {
-    LoginHelper.clearLoggedInUser();
-    Navigator.pushReplacement(
-    context, 
-    MaterialPageRoute(
-            builder: (context) => LoginPage(title: 'Log In')
-          )
-    );
+      LoginHelper.clearLoggedInUser();
+      Navigator.pushReplacement(
+        context, 
+        MaterialPageRoute(
+                builder: (context) => LoginPage(title: 'Log In')
+              )
+      );
   }
     return Scaffold(
       appBar: AppBar(
