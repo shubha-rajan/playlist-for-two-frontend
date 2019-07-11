@@ -24,16 +24,20 @@ Future main() async {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
-
+    String initRoute;
+    LoginHelper.getLoggedInUser().then((user){
+      initRoute = (user=='') ? '/' : '/home';
+    });
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primaryColor: Colors.green,
         brightness: Brightness.dark,
       ),
-      initialRoute: '/',
+      initialRoute: initRoute,
       routes: {
         '/': (context) => LoginPage(title:"Log In"),
         '/home':(context) => HomePage()
@@ -46,7 +50,7 @@ class LoginHelper {
 
   static Future<String> getLoggedInUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('UID') ?? false;
+    return prefs.getString('UID') ?? '';
   }
 
   static Future<bool> setLoggedInUser(String id) async {
@@ -54,7 +58,7 @@ class LoginHelper {
     return prefs.setString('UID', id);
   }
 
-  static Future<bool> clearLoggedInUser(String value)  async {
+  static Future<bool> clearLoggedInUser()  async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.clear();
   }
@@ -81,13 +85,14 @@ class _LoginPageState extends State<LoginPage> {
     initUriListener();
   }
 
-  getToken(code) async {
+  getUser(code) async {
     var payload = {"code": "$code"};
     var response = await http.post('http://127.0.0.1:5000/login-user', body: payload);
+    LoginHelper.setLoggedInUser(json.decode(response.body)['spotify_id']);
     Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(name:json.decode(response.body)['name']),
+            builder: (context) => HomePage(),
           ),
     );
   }
@@ -97,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
     getUriLinksStream().listen((Uri uri) {
       if (uri?.queryParameters['state'] == stateKey) {
         var code = uri?.queryParameters['code'];
-        getToken(code);
+        getUser(code);
         closeWebView();
       }
 
@@ -106,13 +111,12 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _logInPage()  async {
+  void _launchSpotify()  async {
   var clientId = DotEnv().env['SPOTIFY_CLIENT_ID'];
   var redirectUri = DotEnv().env['SPOTIFY_REDIRECT_URI'];
   var scopes = "user-library-read user-read-recently-played user-top-read playlist-read-collaborative playlist-modify-private";
 
   final url = Uri.encodeFull('https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&state=$stateKey&scope=$scopes&show_dialog=true');
-
 
     if (await canLaunch(url)) {
       await launch(url);
@@ -120,6 +124,8 @@ class _LoginPageState extends State<LoginPage> {
       throw 'Could not launch $url';
     }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Image.asset('graphics/logo-white.png', width:250),
             MaterialButton(
-              onPressed: _logInPage,
+              onPressed: _launchSpotify,
               child: Text('Log in with Spotify',
                 style: TextStyle(fontSize: 20)
               ),
@@ -145,30 +151,52 @@ class _LoginPageState extends State<LoginPage> {
               color:Colors.green, 
               height: 50,
               minWidth:300
-      ),
+            ),
           ],
         ),
       ),
-     
     );
   }
 }
 
 
 class HomePage extends StatelessWidget {
-  HomePage({Key key, this.name}) : super(key: key);
-
-  final String name;
 
   @override
   Widget build(BuildContext context) {
+
+    void _logOutUser() {
+    LoginHelper.clearLoggedInUser();
+    Navigator.pushReplacement(
+    context, 
+    MaterialPageRoute(
+            builder: (context) => LoginPage(title: 'Log In')
+          )
+    );
+  }
     return Scaffold(
       appBar: AppBar(
         title: Text("Playlist for Two"),
       ),
       body: Center(
-        child: Text('Welcome, $name!'),
-        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Welcome'),
+            MaterialButton(
+                  onPressed: _logOutUser,
+                  child: Text('Log Out',
+                    style: TextStyle(fontSize: 20)
+                  ),
+                  shape: StadiumBorder(),
+                  textColor: Colors.white,
+                  color:Colors.green, 
+                  height: 50,
+                  minWidth:300
+            ),
+          ]
+        )
+      )
     );
   }
 }
