@@ -117,12 +117,13 @@ class _LoginPageState extends State<LoginPage> {
     var response = await http.post('http://127.0.0.1:5000/login-user', body: payload);
     LoginHelper.setLoggedInUser(json.decode(response.body)['spotify_id']);
     LoginHelper.setUserName(json.decode(response.body)['name']);
-    print(json.decode(response.body)['image_links'][0]['url']);
-    LoginHelper.setUserPhoto(json.decode(response.body)['image_links'][0]['url']);
+    List<dynamic> imageLinks = json.decode(response.body)['image_links'];
+    String url = (imageLinks.length > 0) ? imageLinks[0]['url'] : '';
+    LoginHelper.setUserPhoto(url);
     Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(name: json.decode(response.body)['name'], imageUrl: json.decode(response.body)['image_links'][0]['url'],),
+            builder: (context) => HomePage(name: json.decode(response.body)['name'], imageUrl: url),
           ),
     );
   }
