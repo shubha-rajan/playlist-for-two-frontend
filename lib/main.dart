@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => SplashPage(),
-        '/login': (context) => LoginPage(title:"Log In"),
+        '/login': (context) => LoginPage(),
         '/home':(context) => HomePage()
       }
     );
@@ -59,10 +59,30 @@ class LoginHelper {
     return prefs.getString('UID') ?? '';
   }
 
+  static Future<String> getUserName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('name') ?? '';
+  }
+
+  static Future<String> getUserPhoto() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('imageUrl') ?? '';
+  }
+
+
   static Future<bool> setLoggedInUser(String id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString('UID', id);
-    
+  }
+
+  static Future<bool> setUserName(String name) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('name', name);
+  }
+
+  static Future<bool> setUserPhoto(String imageUrl) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('imageUrl', imageUrl);
   }
 
   static Future<bool> clearLoggedInUser()  async {
@@ -72,9 +92,8 @@ class LoginHelper {
 }
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title}) : super(key: key);
+  LoginPage({Key key}) : super(key: key);
 
-  final String title;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -96,10 +115,12 @@ class _LoginPageState extends State<LoginPage> {
     var payload = {"code": "$code"};
     var response = await http.post('http://127.0.0.1:5000/login-user', body: payload);
     LoginHelper.setLoggedInUser(json.decode(response.body)['spotify_id']);
+    LoginHelper.setUserName(json.decode(response.body)['name']);
+
     Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => HomePage(name: json.decode(response.body)['name']),
           ),
     );
   }
@@ -139,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
 
-        title: Text(widget.title),
+        title: Text('Log In'),
       ),
       body: Center(
 
@@ -174,9 +195,19 @@ new _SplashPageState();
 class _SplashPageState extends State<SplashPage> {
   getNextScreen() async {
      String user = await LoginHelper.getLoggedInUser();
-      print(user);
-      String route = (user == '') ? '/login' : '/home';
-      return Navigator.pushReplacementNamed(context, route);
+      if (user == '') {
+        return Navigator.pushReplacementNamed(context, '/login');
+      } else {
+        String username = await LoginHelper.getUserName();
+        String url = await LoginHelper.getUserPhoto();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(name: username, imageUrl: url),
+          ),
+    );
+      }
+      
   }
   startTimer() async {
     var _duration = new Duration(seconds: 2);
@@ -201,19 +232,18 @@ class _SplashPageState extends State<SplashPage> {
 
 
 class HomePage extends StatelessWidget {
-
+  HomePage({Key key, this.name, this.imageUrl}) : super(key: key);
+  final String name;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
 
     void _logOutUser() {
       LoginHelper.clearLoggedInUser();
-      Navigator.pushReplacement(
-        context, 
-        MaterialPageRoute(
-                builder: (context) => LoginPage(title: 'Log In')
-              )
-      );
+      Navigator.pushReplacementNamed(context, '/login');
+
+    
   }
     return Scaffold(
       appBar: AppBar(
@@ -223,7 +253,8 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Welcome'),
+            Text('Welcome, $name',
+            style: TextStyle(fontSize: 50), textAlign: TextAlign.center,),
             MaterialButton(
                   onPressed: _logOutUser,
                   child: Text('Log Out',
