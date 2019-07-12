@@ -19,7 +19,7 @@ class AuthHelper {
   static void launchSpotifyLogin(String stateKey)  async {
     var clientId = DotEnv().env['SPOTIFY_CLIENT_ID'];
     var redirectUri = DotEnv().env['SPOTIFY_REDIRECT_URI'];
-    var scopes = "user-library-read user-read-recently-played user-top-read playlist-read-collaborative playlist-modify-private";
+    var scopes = "user-library-read user-follow-read user-top-read playlist-read-collaborative playlist-modify-private";
 
     final url = Uri.encodeFull('https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&state=$stateKey&scope=$scopes&show_dialog=true');
 
