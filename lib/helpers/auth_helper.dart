@@ -46,7 +46,7 @@ class AuthHelper {
 
   static Future getUser(code) async {
     var payload = {"code": "$code"};
-    var response = await http.post('http://127.0.0.1:5000/login-user', body: payload);
+    var response = await http.post(DotEnv().env['P42_API'], body: payload);
 
     LoginHelper.setLoggedInUser(json.decode(response.body)['spotify_id']);
     LoginHelper.setUserName(json.decode(response.body)['name']);
