@@ -7,6 +7,11 @@ class LoginHelper {
     return prefs.getString('UID') ?? '';
   }
 
+  static Future<String> getAuthToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('authToken') ?? '';
+  }
+
   static Future<String> getUserName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('name') ?? '';
@@ -21,6 +26,11 @@ class LoginHelper {
   static Future<bool> setLoggedInUser(String id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString('UID', id);
+  }
+
+  static Future<bool> setAuthToken(String token) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('authToken', token);
   }
 
   static Future<bool> setUserName(String name) async {

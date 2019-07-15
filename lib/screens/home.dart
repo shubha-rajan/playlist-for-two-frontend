@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:playlist_for_two/helpers/login_helper.dart';
-import 'package:playlist_for_two/screens/songs_list.dart';
+import 'package:playlist_for_two/screens/list.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -21,15 +22,35 @@ class HomePage extends StatelessWidget {
     void _getUserSongs() async {
       String userID = await LoginHelper.getLoggedInUser();
       
-      var response = await http.get('http://play-for-two.herokuapp.com/listening-history?user_id=$userID');
+      var response = await http.get('${DotEnv().env['P42_API']}/listening-history?user_id=$userID');
       Navigator.push(
         context, 
         MaterialPageRoute(
-            builder: (context) => SongsListPage(songsList: json.decode(response.body)['top_songs'],
+            builder: (context) => ListPage(
+              itemList: json.decode(response.body)['top_songs'], 
+              title:'Top Songs',
           )
         )
       );
     }
+
+    void _getFriendsList() async {
+    String userID = await LoginHelper.getLoggedInUser();
+
+    var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=$userID");
+
+    Navigator.push(
+        context, 
+        MaterialPageRoute(
+            builder: (context) => ListPage(
+              itemList: json.decode(response.body)["friends"], 
+              title:'Friends',
+          )
+        )
+      );
+
+    }
+
 
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +70,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 30),
             MaterialButton(
                   onPressed: _getUserSongs,
-                  child: Text('My Summary',
+                  child: Text('My Top Songs',
                     style: TextStyle(fontSize: 20)
                   ),
                   shape: StadiumBorder(),
@@ -60,7 +81,7 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 30),
             MaterialButton(
-                  onPressed: _logOutUser,
+                  onPressed: _getFriendsList,
                   child: Text('My Friends',
                     style: TextStyle(fontSize: 20)
                   ),
