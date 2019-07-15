@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/list.dart';
+import 'package:playlist_for_two/screens/friends.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
@@ -42,8 +43,8 @@ class HomePage extends StatelessWidget {
     Navigator.push(
         context, 
         MaterialPageRoute(
-            builder: (context) => ListPage(
-              itemList: json.decode(response.body)["friends"], 
+            builder: (context) => FriendsPage(
+              data: json.decode(response.body)["friends"], 
               title:'Friends',
           )
         )

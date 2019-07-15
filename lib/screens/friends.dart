@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 
 class FriendsPage extends StatefulWidget {
-  FriendsPage ({Key key}) : super(key: key);
+  FriendsPage ({Key key, this.data, this.title}) : super(key: key);
+  final dynamic data;
+  final String title;
+
   
 
   @override
@@ -10,8 +13,10 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
-  dynamic data;
-  String title;
+  
+  void _findFriends(){
+    
+  }
 
   Widget build(BuildContext context) {
 
@@ -19,25 +24,28 @@ class _FriendsPageState extends State<FriendsPage> {
       length:3,
       child: Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
         bottom: TabBar(
           tabs: [
-                Tab(text: "Incoming Requests",),
-                Tab(text: "Sent Requests"),
-                Tab(text: "Accepted Requests"),
+                Tab(text: "Incoming",),
+                Tab(text: "Sent"),
+                Tab(text: "Accepted"),
               ],
         )
         
       ),
       body: TabBarView(
           children: [
-            _myListView(context, data['incoming']),
-            _myListView(context, data['sent']),
-            _myListView(context, data['accepted']),
+            _myListView(context, widget.data['incoming']),
+            _myListView(context, widget.data['sent']),
+            _myListView(context, widget.data['accepted']),
           ] ,
-          
-          
-        )
+        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _findFriends,
+        child: Icon(Icons.add), 
+        backgroundColor: Colors.blueAccent
+      )
       )
     );
   }
