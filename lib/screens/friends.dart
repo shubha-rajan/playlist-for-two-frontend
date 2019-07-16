@@ -21,7 +21,11 @@ class FriendsPage extends StatefulWidget {
 
 class _FriendsPageState extends State<FriendsPage> {
   
-  var _friends={};
+  dynamic _friends={
+    'incoming':[],
+    'sent':[],
+    'accepted':[]
+  };
 
   void _findFriends(){
     Navigator.push(context, 
@@ -34,7 +38,7 @@ class _FriendsPageState extends State<FriendsPage> {
   Future<Map> getData() async {
     String token = await LoginHelper.getAuthToken();
     String userID = await LoginHelper.getLoggedInUser();
-    
+
     var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=$userID", headers: {'authorization': token});
 
     return json.decode(response.body);

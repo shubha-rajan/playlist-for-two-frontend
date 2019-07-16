@@ -17,7 +17,12 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
 
-  var _songData;
+  var _songData= {
+    'top_songs':[],
+    'saved_songs':[],
+    'followed_artists':[],
+    'top_artists':[]
+  };
 
   Future<Map> getData() async {
     String token = await LoginHelper.getAuthToken();
