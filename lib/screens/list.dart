@@ -17,7 +17,7 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
 
-  var _songData= {
+  dynamic _songData= {
     'top_songs':[],
     'saved_songs':[],
     'followed_artists':[],

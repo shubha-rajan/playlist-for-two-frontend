@@ -33,7 +33,7 @@ class _SearchPageState extends State<SearchPage> {
 
 
   Widget build(BuildContext context) {
-    
+    setUsers();
     return Scaffold(
       appBar: AppBar(
         title: Text('Find Friends'),    

@@ -54,7 +54,6 @@ class AuthHelper {
 
     var userInfo= await http.get("${DotEnv().env['P42_API']}/me", headers:{'authorization':response.body});
 
-    print(userInfo.body);
     LoginHelper.setLoggedInUser(json.decode(userInfo.body)['spotify_id']);
     LoginHelper.setUserName(json.decode(userInfo.body)['name']);
     List<dynamic> imageLinks = json.decode(userInfo.body)['image_links'];
