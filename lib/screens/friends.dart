@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:playlist_for_two/helpers/login_helper.dart';
+import 'package:playlist_for_two/screens/search_users.dart';
 
 
 
@@ -11,9 +12,7 @@ class FriendsPage extends StatefulWidget {
   FriendsPage ({Key key, this.title}) : super(key: key);
   final String title;
 
-  void findFriends(){
-    
-  }
+  
   
 
   @override
@@ -22,7 +21,15 @@ class FriendsPage extends StatefulWidget {
 
 class _FriendsPageState extends State<FriendsPage> {
   
-  var _friends;
+  var _friends={};
+
+  void _findFriends(){
+    Navigator.push(context, 
+      MaterialPageRoute(
+            builder: (context) => SearchPage()
+      )
+    );
+  }
 
   Future<Map> getData() async {
     String userID = await LoginHelper.getLoggedInUser();
@@ -40,7 +47,7 @@ class _FriendsPageState extends State<FriendsPage> {
   }
   
   Widget build(BuildContext context) {
-
+    setData();
     return DefaultTabController(
       length:3,
       child: Scaffold(
@@ -63,7 +70,7 @@ class _FriendsPageState extends State<FriendsPage> {
           ] ,
         ),
       floatingActionButton: FloatingActionButton(
-        onPressed: widget.findFriends,
+        onPressed: _findFriends,
         child: Icon(Icons.add), 
         backgroundColor: Colors.blueAccent
       )

@@ -1,33 +1,60 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'package:playlist_for_two/helpers/login_helper.dart';
 
 
-class FriendsPage extends StatefulWidget {
-  FriendsPage ({Key key}) : super(key: key);
-
-  
+class SearchPage extends StatefulWidget {
+  SearchPage ({Key key}) : super(key: key);
 
   @override
-  _FriendsPageState createState() => _FriendsPageState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
-class _FriendsPageState extends State<FriendsPage> {
-  List _friends = [];
+class _SearchPageState extends State<SearchPage> {
+  TextEditingController editingController = TextEditingController();
+  var _users = [];
+
+  Future<List> getUsers() async {
+    String userID = await LoginHelper.getLoggedInUser();
+
+    var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=$userID");
+
+    return json.decode(response.body);
+  }
+
+  void setUsers() async {
+    var data = await getUsers();
+    setState(() {
+      _users= data;
+    });
+  }
+
 
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Find Friends'),
-        bottom: TabBar(
-          tabs: [
-                Tab(text: "Incoming",),
-                Tab(text: "Sent"),
-                Tab(text: "Accepted"),
-              ],
-        )
-        
+        title: Text('Find Friends'),    
       ),
-      body: _myListView(context, _friends),
+      body:Column(
+        children: <Widget>[
+              TextField(
+                controller: editingController,
+                decoration: InputDecoration(
+                  labelText: "Search",
+                  hintText: "Search",
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))
+                  )
+                ),
+              ),
+              _myListView(context, _users),
+        ],
+      ) 
     );
   }
   Widget _myListView(BuildContext context, List data) {
