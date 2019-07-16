@@ -51,7 +51,7 @@ class AuthHelper {
 
     LoginHelper.setLoggedInUser(json.decode(response.body)['spotify_id']);
     LoginHelper.setUserName(json.decode(response.body)['name']);
-    LoginHelper.setAuthToken(json.decode(response.body)['access_token']);
+    LoginHelper.setAuthToken(json.decode(response.body)['jwt']);
 
     List<dynamic> imageLinks = json.decode(response.body)['image_links'];
     String url = (imageLinks.length > 0) ? imageLinks[0]['url'] : '';

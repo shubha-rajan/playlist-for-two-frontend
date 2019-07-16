@@ -18,9 +18,7 @@ class _SearchPageState extends State<SearchPage> {
   var _users = [];
 
   Future<List> getUsers() async {
-    String userID = await LoginHelper.getLoggedInUser();
-
-    var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=$userID");
+    var response = await http.get("${DotEnv().env['P42_API']}/users");
 
     return json.decode(response.body);
   }
