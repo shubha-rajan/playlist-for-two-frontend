@@ -1,11 +1,19 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'package:playlist_for_two/helpers/login_helper.dart';
+
 
 
 class FriendsPage extends StatefulWidget {
-  FriendsPage ({Key key, this.data, this.title}) : super(key: key);
-  final dynamic data;
+  FriendsPage ({Key key, this.title}) : super(key: key);
   final String title;
 
+  void findFriends(){
+    
+  }
   
 
   @override
@@ -14,10 +22,23 @@ class FriendsPage extends StatefulWidget {
 
 class _FriendsPageState extends State<FriendsPage> {
   
-  void _findFriends(){
-    
+  var _friends;
+
+  Future<Map> getData() async {
+    String userID = await LoginHelper.getLoggedInUser();
+
+    var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=$userID");
+
+    return json.decode(response.body);
   }
 
+  void setData() async {
+    var data = await getData();
+    setState(() {
+      _friends= data['friends'];
+    });
+  }
+  
   Widget build(BuildContext context) {
 
     return DefaultTabController(
@@ -36,13 +57,13 @@ class _FriendsPageState extends State<FriendsPage> {
       ),
       body: TabBarView(
           children: [
-            _myListView(context, widget.data['incoming']),
-            _myListView(context, widget.data['sent']),
-            _myListView(context, widget.data['accepted']),
+            _myListView(context, _friends['incoming']),
+            _myListView(context, _friends['sent']),
+            _myListView(context, _friends['accepted']),
           ] ,
         ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _findFriends,
+        onPressed: widget.findFriends,
         child: Icon(Icons.add), 
         backgroundColor: Colors.blueAccent
       )
