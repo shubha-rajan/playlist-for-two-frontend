@@ -18,7 +18,8 @@ class _SearchPageState extends State<SearchPage> {
   var _users = [];
 
   Future<List> getUsers() async {
-    var response = await http.get("${DotEnv().env['P42_API']}/users");
+    String token = await LoginHelper.getAuthToken();
+    var response = await http.get("${DotEnv().env['P42_API']}/users", headers:{"authorization":token} );
 
     return json.decode(response.body);
   }
@@ -32,7 +33,7 @@ class _SearchPageState extends State<SearchPage> {
 
 
   Widget build(BuildContext context) {
-
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Find Friends'),    

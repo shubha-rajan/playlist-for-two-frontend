@@ -32,9 +32,10 @@ class _FriendsPageState extends State<FriendsPage> {
   }
 
   Future<Map> getData() async {
+    String token = await LoginHelper.getAuthToken();
     String userID = await LoginHelper.getLoggedInUser();
-
-    var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=$userID");
+    
+    var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=$userID", headers: {'authorization': token});
 
     return json.decode(response.body);
   }

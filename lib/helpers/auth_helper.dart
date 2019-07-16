@@ -49,17 +49,21 @@ class AuthHelper {
     
     var response = await http.post("${DotEnv().env['P42_API']}/login-user", body: payload);
 
-    LoginHelper.setLoggedInUser(json.decode(response.body)['spotify_id']);
-    LoginHelper.setUserName(json.decode(response.body)['name']);
-    LoginHelper.setAuthToken(json.decode(response.body)['jwt']);
+    
+    LoginHelper.setAuthToken(response.body);
 
-    List<dynamic> imageLinks = json.decode(response.body)['image_links'];
+    var userInfo= await http.get("${DotEnv().env['P42_API']}/me", headers:{'authorization':response.body});
+
+    print(userInfo.body);
+    LoginHelper.setLoggedInUser(json.decode(userInfo.body)['spotify_id']);
+    LoginHelper.setUserName(json.decode(userInfo.body)['name']);
+    List<dynamic> imageLinks = json.decode(userInfo.body)['image_links'];
     String url = (imageLinks.length > 0) ? imageLinks[0]['url'] : '';
     LoginHelper.setUserPhoto(url);
     
    locator<NavigationService>().navigateTo(
        MaterialPageRoute(
-            builder: (context) => HomePage(name: json.decode(response.body)['name'], imageUrl: url),
+            builder: (context) => HomePage(name: json.decode(userInfo.body)['name'], imageUrl: url),
           )
     );
   }
