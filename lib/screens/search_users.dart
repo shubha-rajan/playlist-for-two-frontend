@@ -14,8 +14,30 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  TextEditingController editingController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    searchController.dispose();
+    super.dispose();
+  }
+
   var _users = [];
+  String _searchTerm;
+
+  void _updateSearchTerm() {
+    setState(() {
+      _searchTerm = searchController.text;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(_updateSearchTerm);
+  }
 
   Future<List> getUsers() async {
     String token = await LoginHelper.getAuthToken();
@@ -32,6 +54,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
 
+
   Widget build(BuildContext context) {
     setUsers();
     return Scaffold(
@@ -41,7 +64,7 @@ class _SearchPageState extends State<SearchPage> {
       body:Column(
         children: <Widget>[
               TextField(
-                controller: editingController,
+                controller: searchController,
                 decoration: InputDecoration(
                   labelText: "Search",
                   hintText: "Search",
