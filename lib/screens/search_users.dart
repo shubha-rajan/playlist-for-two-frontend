@@ -24,14 +24,24 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
-  var _users = [];
-  String _searchTerm;
+  dynamic _users = [];
+  dynamic _searchResults = [];
+
 
   void _updateSearchTerm() {
+    String _searchTerm = searchController.text;
+    List results = [];
+    _users.forEach((user) {
+      if (user['name'].toLowerCase().contains(_searchTerm.toLowerCase())) {
+        results.add(user);
+      } 
+    });
     setState(() {
-      _searchTerm = searchController.text;
+      _searchResults = results;
     });
   }
+
+    
 
   @override
   void initState() {
@@ -47,9 +57,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void setUsers() async {
-    var data = await getUsers();
+    var userData = await getUsers();
     setState(() {
-      _users= data;
+      _users= userData;
     });
   }
 
@@ -74,19 +84,19 @@ class _SearchPageState extends State<SearchPage> {
                   )
                 ),
               ),
-              _myListView(context, _users),
+              _searchListView(context, _searchResults),
         ],
       ) 
     );
   }
-  Widget _myListView(BuildContext context, List data) {
+  Widget _searchListView(BuildContext context, List searchResults) {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: data.length,
+        itemCount: searchResults.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(data[index]['name']),
+            title: Text(searchResults[index]['name']),
           );
         },
       );
