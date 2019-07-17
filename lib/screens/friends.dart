@@ -89,7 +89,7 @@ class _FriendsPageState extends State<FriendsPage> {
         itemCount: data.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(data[index]['name']),
+            title: Text(json.decode(data[index])['name']),
           );
         },
       );
