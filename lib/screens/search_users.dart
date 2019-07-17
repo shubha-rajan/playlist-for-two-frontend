@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:playlist_for_two/helpers/login_helper.dart';
-
+import 'package:playlist_for_two/screens/user.dart';
 
 class SearchPage extends StatefulWidget {
   SearchPage ({Key key}) : super(key: key);
@@ -63,6 +63,13 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  void viewUser(userID, name) {
+    Navigator.push(context,
+    MaterialPageRoute(
+      builder: (context) => UserPage(userID: userID, name:name)
+    )
+  );
+  }
 
 
   Widget build(BuildContext context) {
@@ -84,7 +91,8 @@ class _SearchPageState extends State<SearchPage> {
                   )
                 ),
               ),
-              _searchListView(context, _searchResults),
+              Expanded(child: _searchListView(context, _searchResults),)
+              ,
         ],
       ) 
     );
@@ -97,6 +105,9 @@ class _SearchPageState extends State<SearchPage> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(searchResults[index]['name']),
+            onTap: (){
+              viewUser(searchResults[index]['spotify_id'], searchResults[index]['name']);
+            },
           );
         },
       );
