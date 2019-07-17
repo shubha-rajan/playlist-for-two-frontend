@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/search_users.dart';
+import 'package:playlist_for_two/screens/user.dart';
 
 
 
@@ -51,6 +52,14 @@ class _FriendsPageState extends State<FriendsPage> {
     });
   }
   
+  void viewUser(userID, name) {
+    Navigator.push(context,
+    MaterialPageRoute(
+      builder: (context) => UserPage(userID: userID, name:name)
+    )
+  );
+  }
+
   Widget build(BuildContext context) {
     setData();
     return DefaultTabController(
@@ -90,6 +99,9 @@ class _FriendsPageState extends State<FriendsPage> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(json.decode(data[index])['name']),
+            onTap: (){
+              viewUser(json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
+            },
           );
         },
       );
