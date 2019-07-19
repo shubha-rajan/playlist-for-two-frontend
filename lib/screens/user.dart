@@ -72,7 +72,12 @@ class _UserPageState extends State<UserPage> {
         };
         dynamic response = await http.post("${DotEnv().env['P42_API']}/request-friend", headers:{"authorization":token}, body:payload);
 
-        print(response.body);
+        if (response.status == 200) {
+          setState(() {
+            _friendStatus ='requested';
+          });
+        }
+
   }
 
   void _acceptFriend() async {
@@ -84,10 +89,14 @@ class _UserPageState extends State<UserPage> {
         };
     dynamic response = await http.post("${DotEnv().env['P42_API']}/accept-friend", headers:{"authorization":token}, body:payload);
 
-    print(response.body);
+    if (response.status == 200) {
+          setState(() {
+            _friendStatus ='accepted';
+          });
+        }
   }
 
-  void _viewPlaylist() async {
+  void _viewPlaylists() async {
     print('TODO: Write me!');
   }
 
@@ -104,7 +113,7 @@ class _UserPageState extends State<UserPage> {
             Text(widget.name,
             style: TextStyle(fontSize: 50), textAlign: TextAlign.center,),
             SizedBox(height: 30),
-            _actionButton(context, _friendStatus, _requestFriend, _acceptFriend, _viewPlaylist)
+            _actionButton(context, _friendStatus, _requestFriend, _acceptFriend, _viewPlaylists)
           ]
         )
       )
