@@ -64,7 +64,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 30),
             MaterialButton(
                   onPressed: _getUserSongs,
-                  child: Text('My Top Songs',
+                  child: Text('My Song Data',
                     style: TextStyle(fontSize: 20)
                   ),
                   shape: StadiumBorder(),

@@ -29,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
     AuthHelper.initUriListener(stateKey);
   }
 
+  
+
   _loginPressed(){
     AuthHelper.launchSpotifyLogin(stateKey);
   }

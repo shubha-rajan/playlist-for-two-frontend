@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
+import 'package:playlist_for_two/screens/playlists.dart';
 
 
 
@@ -18,7 +19,7 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
 
-  String _friendStatus;
+  String _friendStatus = 'pending';
 
 
   Future<Map> getFriends() async {
@@ -34,7 +35,7 @@ class _UserPageState extends State<UserPage> {
   void setFriendStatus(id) async{
     var data = await getFriends();
     var _friends= data['friends'];
-    print(_friends);
+
     dynamic incoming = _friends['incoming'].map((friend) => json.decode(friend)['friend_id']);
     dynamic requested = _friends['sent'].map((friend) => json.decode(friend)['friend_id']);
     dynamic accepted = _friends['accepted'].map((friend) => json.decode(friend)['friend_id']);
@@ -97,7 +98,11 @@ class _UserPageState extends State<UserPage> {
   }
 
   void _viewPlaylists() async {
-    print('TODO: Write me!');
+    Navigator.push(context,
+      MaterialPageRoute(
+        builder: (context) => PlaylistPage(friendID: widget.userID)
+      )
+    );
   }
 
   @override
@@ -155,7 +160,7 @@ Widget _actionButton(BuildContext context, String status, Function requestFriend
     case 'accepted': {
       button = MaterialButton(
               onPressed: viewPlaylist,
-              child: Text('Show Playlist',
+              child: Text('View Shared Playlists',
                     style: TextStyle(fontSize: 20)
                   ),
                   shape: StadiumBorder(),
@@ -180,6 +185,10 @@ Widget _actionButton(BuildContext context, String status, Function requestFriend
             );
     }
     break;
+    default:{
+      button = SizedBox();
+    }
+      
   }
   return(button);
 }
