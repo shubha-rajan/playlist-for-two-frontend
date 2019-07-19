@@ -21,6 +21,12 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
+   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
   
   dynamic _friends={
     'incoming':[],
@@ -42,7 +48,12 @@ class _FriendsPageState extends State<FriendsPage> {
 
     var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=$userID", headers: {'authorization': token});
 
-    return json.decode(response.body);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      return _friends;
+    }
+      
   }
 
   void setData() async {

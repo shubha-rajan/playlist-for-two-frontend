@@ -16,6 +16,13 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchController = TextEditingController();
 
+   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
+  
   @override
   void dispose() {
     // Clean up the controller when the widget is removed from the

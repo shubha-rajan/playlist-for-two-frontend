@@ -13,11 +13,19 @@ var uuid = new Uuid(options: {
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
+  
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
   
   var stateKey = uuid.v4(options: {
   'rng': UuidUtil.cryptoRNG

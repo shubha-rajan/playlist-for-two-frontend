@@ -17,6 +17,13 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
 
+   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
+
   dynamic _songData= {
     'top_songs':[],
     'saved_songs':[],

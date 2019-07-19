@@ -5,8 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 
 class PlaylistPage extends StatefulWidget {
-  PlaylistPage ({Key key, this.friendID}) : super(key: key);
+  PlaylistPage ({Key key, this.friendID, this.name}) : super(key: key);
   final String friendID;
+  final String name;
 
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
@@ -15,8 +16,52 @@ class PlaylistPage extends StatefulWidget {
 
 
 class _PlaylistPageState extends State<PlaylistPage> {
+   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
 
   dynamic _playlists= [];
+
+  Future<void> _createPlaylist() async{
+    String userID = await LoginHelper.getLoggedInUser();
+    String token = await LoginHelper.getAuthToken();
+    dynamic response = await http.post("${DotEnv().env['P42_API']}/new-playlist?user_id=$userID&friend_id=${widget.friendID}", 
+    headers:{'authorization': token});
+    if (response.status_code == 200) {
+      setData();
+    }
+  }
+
+  Future<void> _createPlaylistDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Make a new playlist'),
+        content:Text('Generate a playlist based on randomly selected songs, artists, and genres that you and ${widget.name} have in common.'),         
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: Text("Let's make a playlist!"),
+            onPressed: () {
+              _createPlaylist();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
   Future<List> getPlaylists() async {
     String token = await LoginHelper.getAuthToken();
@@ -45,9 +90,23 @@ class _PlaylistPageState extends State<PlaylistPage> {
       ),
       body:Flex(
         direction: Axis.vertical,
-        children: [Expanded(
+        children: [
+          SizedBox(height:40),
+          MaterialButton(
+              onPressed: _createPlaylistDialog,
+              child: Text('Create a new playlist!',
+                    style: TextStyle(fontSize: 20)
+                  ),
+                  shape: StadiumBorder(),
+                  textColor: Colors.white,
+                  color:Colors.blueAccent, 
+                  height: 50,
+                  minWidth:300
+            ),
+          SizedBox(height:40),
+          Expanded(
           child: _playlistListView(context, _playlists),
-      )
+        )
         ]
       )
       )
@@ -61,6 +120,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(data[index]['description']['name']),
+            trailing: Icon(Icons.arrow_forward),
           );
         },
       );

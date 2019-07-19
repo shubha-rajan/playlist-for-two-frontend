@@ -19,6 +19,13 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
 
+   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
+
   String _friendStatus = 'pending';
 
 
@@ -100,7 +107,7 @@ class _UserPageState extends State<UserPage> {
   void _viewPlaylists() async {
     Navigator.push(context,
       MaterialPageRoute(
-        builder: (context) => PlaylistPage(friendID: widget.userID)
+        builder: (context) => PlaylistPage(friendID: widget.userID, name:widget.name)
       )
     );
   }
