@@ -30,10 +30,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
     String token = await LoginHelper.getAuthToken();
     dynamic response = await http.post("${DotEnv().env['P42_API']}/new-playlist?user_id=$userID&friend_id=${widget.friendID}", 
     headers:{'authorization': token});
-    if (response.status_code == 200) {
+    if (response.statusCode == 200) {
       setData();
     }
   }
+
+@override
+  void didChangeDependencies() {
+    setData();
+    super.didChangeDependencies();
+}
 
   Future<void> _createPlaylistDialog() async {
   return showDialog<void>(
@@ -80,7 +86,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   Widget build(BuildContext context) {
-    setData();
+
     return DefaultTabController(
       length:2,
       child:Scaffold (

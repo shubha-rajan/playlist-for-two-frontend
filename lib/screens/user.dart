@@ -80,7 +80,7 @@ class _UserPageState extends State<UserPage> {
         };
         dynamic response = await http.post("${DotEnv().env['P42_API']}/request-friend", headers:{"authorization":token}, body:payload);
 
-        if (response.status == 200) {
+        if (response.statusCode == 200) {
           setState(() {
             _friendStatus ='requested';
           });
@@ -97,7 +97,7 @@ class _UserPageState extends State<UserPage> {
         };
     dynamic response = await http.post("${DotEnv().env['P42_API']}/accept-friend", headers:{"authorization":token}, body:payload);
 
-    if (response.status == 200) {
+    if (response.statusCode == 200) {
           setState(() {
             _friendStatus ='accepted';
           });
