@@ -47,8 +47,13 @@ class _ListPageState extends State<ListPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
     setData();
+    super.didChangeDependencies();
+}
+
+  @override
+  Widget build(BuildContext context) {
     return DefaultTabController(
       length:2,
       child:Scaffold (

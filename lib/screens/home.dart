@@ -37,9 +37,7 @@ class HomePage extends StatelessWidget {
     Navigator.push(
         context, 
         MaterialPageRoute(
-            builder: (context) => FriendsPage(
-              title:'Friends',
-          )
+            builder: (context) => FriendsPage()
         )
       );
 

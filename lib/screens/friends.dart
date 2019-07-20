@@ -10,11 +10,7 @@ import 'package:playlist_for_two/screens/user.dart';
 
 
 class FriendsPage extends StatefulWidget {
-  FriendsPage ({Key key, this.title}) : super(key: key);
-  final String title;
-
-  
-  
+  FriendsPage ({Key key}) : super(key: key);
 
   @override
   _FriendsPageState createState() => _FriendsPageState();
@@ -71,13 +67,19 @@ class _FriendsPageState extends State<FriendsPage> {
   );
   }
 
-  Widget build(BuildContext context) {
+  @override
+  void didChangeDependencies() {
     setData();
+    super.didChangeDependencies();
+  }
+
+  Widget build(BuildContext context) {
+    
     return DefaultTabController(
       length:3,
       child: Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Friends'),
         bottom: TabBar(
           tabs: [
                 Tab(text: "Incoming",),
