@@ -25,8 +25,6 @@ class _SearchPageState extends State<SearchPage> {
   
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
     searchController.dispose();
     super.dispose();
   }
