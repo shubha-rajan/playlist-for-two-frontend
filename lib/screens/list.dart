@@ -6,8 +6,7 @@ import 'package:playlist_for_two/helpers/login_helper.dart';
 
 
 class ListPage extends StatefulWidget {
-  ListPage ({Key key, this.title}) : super(key: key);
-  final String title;
+  ListPage ({Key key}) : super(key: key);
 
   @override
   _ListPageState createState() => _ListPageState();
@@ -71,7 +70,7 @@ class _ListPageState extends State<ListPage> {
       length:3,
       child:Scaffold (
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("My Listening Data"),
         bottom:TabBar(
           tabs: [
                 Tab(text: "Top Songs",),
