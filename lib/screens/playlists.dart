@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
-
+import 'package:playlist_for_two/screens/playlist_info.dart';
 class PlaylistPage extends StatefulWidget {
   PlaylistPage ({Key key, this.friendID, this.name}) : super(key: key);
   final String friendID;
@@ -127,6 +127,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
           return ListTile(
             title: Text(data[index]['description']['name']),
             trailing: Icon(Icons.arrow_forward),
+            onTap:(){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index])));
+            }
           );
         },
       );
