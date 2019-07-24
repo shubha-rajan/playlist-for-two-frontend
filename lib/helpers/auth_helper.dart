@@ -49,8 +49,8 @@ class AuthHelper {
     
     var response = await http.post("${DotEnv().env['P42_API']}/login-user", body: payload);
 
-    
-    LoginHelper.setAuthToken(response.body);
+    String token =response.body;
+    LoginHelper.setAuthToken(token);
 
     var userInfo= await http.get("${DotEnv().env['P42_API']}/me", headers:{'authorization':response.body});
 
@@ -62,7 +62,7 @@ class AuthHelper {
     
    locator<NavigationService>().navigateTo(
        MaterialPageRoute(
-            builder: (context) => HomePage(name: json.decode(userInfo.body)['name'], imageUrl: url),
+            builder: (context) => HomePage(name: json.decode(userInfo.body)['name'], imageUrl: url, userID:json.decode(userInfo.body)['name'], authToken:token),
           )
     );
   }
