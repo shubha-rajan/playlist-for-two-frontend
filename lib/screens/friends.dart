@@ -29,6 +29,7 @@ class _FriendsPageState extends State<FriendsPage> {
     'sent':[],
     'accepted':[]
   };
+  
 
   void _findFriends(){
     Navigator.push(context, 
@@ -82,18 +83,18 @@ class _FriendsPageState extends State<FriendsPage> {
         title: Text('Friends'),
         bottom: TabBar(
           tabs: [
-                Tab(text: "Incoming",),
-                Tab(text: "Sent"),
-                Tab(text: "Accepted"),
+                Tab(text: "Friends"),
+                Tab(text: "New Requests",),
+                Tab(text: "Sent Requests"),
               ],
         )
         
       ),
       body: TabBarView(
           children: [
+            _myListView(context, _friends['accepted']),
             _myListView(context, _friends['incoming']),
             _myListView(context, _friends['sent']),
-            _myListView(context, _friends['accepted']),
           ] ,
         ),
       floatingActionButton: FloatingActionButton(

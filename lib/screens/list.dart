@@ -110,7 +110,7 @@ class _ListPageState extends State<ListPage> {
         itemCount: data.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(data[index]['name']),
+            title: Text("${index +1} . ${data[index]['name']}"),
           );
         },
       );
@@ -123,7 +123,7 @@ class _ListPageState extends State<ListPage> {
         itemCount: data.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(data[index]),
+            title: Text("${index + 1} . ${data[index]}"),
           );
         },
       );

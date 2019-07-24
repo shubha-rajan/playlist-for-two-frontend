@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
     String _searchTerm = searchController.text;
     List results = [];
     _users.forEach((user) {
-      if (user['name'].toLowerCase().contains(_searchTerm.toLowerCase())) {
+      if ((_searchTerm.length > 0) && (user['name'].toLowerCase().contains(_searchTerm.toLowerCase()))) {
         results.add(user);
       } 
     });
