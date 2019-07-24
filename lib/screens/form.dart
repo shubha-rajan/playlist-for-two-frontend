@@ -125,12 +125,28 @@ class MultiSelect extends StatefulWidget {
 }
 
 class _MultiSelectState extends State<MultiSelect> {
-  List<String> _selected = List();
-  
+  List<String> _selected = [];
+  List <dynamic> _displayed = [];
+  int present = 0;
+  int perPage = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      if((present + perPage )> widget.data.length) {
+                    _displayed.addAll(
+                        widget.data.getRange(present, widget.data.length));
+                  } else {
+                    _displayed.addAll(
+                        widget.data.getRange(present, present + perPage));
+                  }
+                  present = present + perPage;
+    });
+  }
     _buildChoiceList() {
-    
     List<Widget> choices = List();
-    widget.data.forEach((item) {
+    _displayed.forEach((item) {
       String name = (item is String) ? item : item['name'];
       String id = (item is String) ? item : item['name'];
       choices.add(Container(
@@ -152,6 +168,26 @@ class _MultiSelectState extends State<MultiSelect> {
         ),
       ));
     });
+    if (present <= widget.data.length){
+      choices.add(FlatButton(
+              child: Text("Load More",
+              style: TextStyle(color: Colors.lightBlue),),
+              onPressed: () {
+                setState(() {
+                  if((present + perPage )> widget.data.length) {
+                    _displayed.addAll(
+                        widget.data.getRange(present, widget.data.length));
+                  } else {
+                    _displayed.addAll(
+                        widget.data.getRange(present, present + perPage));
+                  }
+                  present = present + perPage;
+                });
+              },
+            )
+          );
+    }
+    
     return choices;
   }
    @override
