@@ -29,6 +29,9 @@ class _PlaylistFormState extends State<PlaylistForm>{
     return json.decode(response.body);
   }
 
+  
+
+
   void setData() async {
     dynamic seeds = await getSeeds();
     setState(() {
@@ -71,7 +74,13 @@ class _PlaylistFormState extends State<PlaylistForm>{
                 SizedBox(height: 20),
                 Text("Common Songs",
                 style: TextStyle(fontSize: 20)),
+                (_seeds['common_songs'].length == 0) ?
+                Padding(child:Text("No common songs... yet! :D",
+                style: TextStyle(fontSize: 15)),
+                padding: EdgeInsets.only(top:30, bottom:30),
+                ) :
                 Container(child:MultiSelect( _seeds['common_songs'],
+                (_selectedSongs.length + _selectedArtists.length + _selectedGenres.length),
                 onSelectionChanged: (selectedList) {
                   setState(() {
                         _selectedSongs = selectedList;
@@ -79,7 +88,13 @@ class _PlaylistFormState extends State<PlaylistForm>{
     },), width:300),
                 Text("Common Artists",
                 style: TextStyle(fontSize: 20)),
+                (_seeds['common_artists'].length == 0) ?
+                Padding(child:Text("No common artists, yet!",
+                style: TextStyle(fontSize: 20)),
+                padding: EdgeInsets.only(top:30, bottom:30),
+                ) :
                 Container(child:MultiSelect( _seeds['common_artists'],
+                (_selectedSongs.length + _selectedArtists.length + _selectedGenres.length),
                 onSelectionChanged: (selectedList) {
                   setState(() {
                         _selectedArtists = selectedList;
@@ -87,7 +102,13 @@ class _PlaylistFormState extends State<PlaylistForm>{
                 }), width:300),
                 Text("Common Genres",
                 style: TextStyle(fontSize: 20)),
+                (_seeds['common_genres'].length == 0) ?
+                Padding(child:Text("No common genres, yet!",
+                style: TextStyle(fontSize: 20)),
+                padding: EdgeInsets.only(top:30, bottom:30),
+                ) :
                 Container(child:MultiSelect(_seeds['common_genres'],
+                (_selectedSongs.length + _selectedArtists.length + _selectedGenres.length),
                 onSelectionChanged: (selectedList) {
                   setState(() {
                         _selectedGenres = selectedList;
@@ -115,8 +136,8 @@ class _PlaylistFormState extends State<PlaylistForm>{
 // Code for MultiSelect widget adapted from 
 // https://medium.com/@KarthikPonnam/flutter-multi-select-choicechip-244ea016b6fa
 class MultiSelect extends StatefulWidget {
-  MultiSelect(this.data,{this.onSelectionChanged});
-
+  MultiSelect(this.data, this.totalSelected, {this.onSelectionChanged});
+  final int totalSelected;
   final List<dynamic> data;
   final Function(List<String>) onSelectionChanged;
   
@@ -125,6 +146,7 @@ class MultiSelect extends StatefulWidget {
 }
 
 class _MultiSelectState extends State<MultiSelect> {
+  
   List<String> _selected = [];
   List <dynamic> _displayed = [];
   int present = 0;
@@ -144,6 +166,28 @@ class _MultiSelectState extends State<MultiSelect> {
                   present = present + perPage;
     });
   }
+
+  Future<void> _seedLimitDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('More than 5 seeds selected'),
+        content:Text('You can choose a maximum of 5 seeds for your custom playlist. Please remove some of your selections before adding more.'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Dismiss'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+  }
+
     _buildChoiceList() {
     List<Widget> choices = List();
     _displayed.forEach((item) {
@@ -159,9 +203,13 @@ class _MultiSelectState extends State<MultiSelect> {
               setState(() {
               _selected.remove(id);
               });
-            } else {
+              widget.onSelectionChanged(_selected);
+            } else if (widget.totalSelected >=5) {
+                _seedLimitDialog();
+              } else {
               setState(() {
               _selected.add(id);
+              widget.onSelectionChanged(_selected);
               });
             }
           },
