@@ -75,15 +75,38 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
               Text(widget.playlist['description']['description'],
               style: TextStyle(fontSize: 15)),
               SizedBox(height:40),
-              Text("Track list:", 
-              style: TextStyle(fontSize: 20)),
             ],
             ),
             margin: EdgeInsets.only(left: 20.0, right: 20.0),
           ),
-          
           Expanded(
-          child: _playlistTrackView(context, _tracks),
+            child:  DefaultTabController(
+              length:1,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+              
+                children: <Widget>[
+              Container(
+                child:TabBar(
+                tabs: [
+                  Tab(child:Text("Tracks",
+                    style: TextStyle(fontSize: 20),
+                  )),
+                ]
+                ),
+              width: 400,),
+              Flexible(
+                child:TabBarView(
+                children: [
+                  _playlistTrackView(context, _tracks),
+                ] ,
+              ),
+              fit: FlexFit.loose,)
+            ],
+            
+            )
+          )
+          
         )
         ]
       )
@@ -91,7 +114,10 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     );
   }
   Widget _playlistTrackView(BuildContext context, List data) {
-    return ListView.builder(
+    return ListView.separated(
+        separatorBuilder:(context, index) => Divider(
+        color: Colors.blueGrey,
+      ),
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: data.length,

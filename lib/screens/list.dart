@@ -84,10 +84,10 @@ class _ListPageState extends State<ListPage> {
         children: [Expanded(
         child: TabBarView(
           children: [
-            (_songData!=null) ? _songArtistListView(context, _songData['top_songs']) : _loadingBar,
-            (_songData!=null)  ? _songArtistListView(context, _songData['top_artists']) : 
+            (_songData!=null) ? _itemListView(context, _songData['top_songs']) : _loadingBar,
+            (_songData!=null)  ? _itemListView(context, _songData['top_artists']) : 
             _loadingBar,
-            (_genres!=null) ? _genreListView(context, _genres.keys.toList()) : 
+            (_genres!=null) ? _itemListView(context, _genres.keys.toList()) : 
             _loadingBar
           ] ,
         )
@@ -103,29 +103,22 @@ class _ListPageState extends State<ListPage> {
               child: new Center(child: new LinearProgressIndicator()),
             );
 
-  Widget _songArtistListView(BuildContext context, List data) {
-    return ListView.builder(
+  Widget _itemListView(BuildContext context, List data) {
+    
+    return ListView.separated(
+        separatorBuilder:(context, index) => Divider(
+        color: Colors.blueGrey,
+      ),
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: data.length,
         itemBuilder: (context, index) {
+          String name = (data[index] is String) ? data[index] : data[index]['name'];
           return ListTile(
-            title: Text("${index +1} . ${data[index]['name']}"),
+            title: Text("${index +1} .  ${name}"),
           );
         },
       );
   }
 
-    Widget _genreListView(BuildContext context, List data) {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text("${index + 1} . ${data[index]}"),
-          );
-        },
-      );
-  }
 }

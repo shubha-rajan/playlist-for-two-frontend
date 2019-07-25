@@ -62,11 +62,11 @@ class _PlaylistFormState extends State<PlaylistForm>{
         Column(
           mainAxisSize: MainAxisSize.min,
           children:<Widget>[
-            SizedBox(height: 20),
+            SizedBox(height: 40),
             Container(
               child:Text("Select up to 5 seeds from songs, artists, and genres that you and ${widget.name} have in common.",
               style: TextStyle(fontSize: 20)),
-              width:300
+              width:350
             ),
             Flex(
               direction: Axis.vertical,
@@ -89,8 +89,8 @@ class _PlaylistFormState extends State<PlaylistForm>{
                 Text("Common Artists",
                 style: TextStyle(fontSize: 20)),
                 (_seeds['common_artists'].length == 0) ?
-                Padding(child:Text("No common artists, yet!",
-                style: TextStyle(fontSize: 20)),
+                Padding(child:Text("No common artists... yet! :D",
+                style: TextStyle(fontSize: 15)),
                 padding: EdgeInsets.only(top:30, bottom:30),
                 ) :
                 Container(child:MultiSelect( _seeds['common_artists'],
@@ -103,8 +103,8 @@ class _PlaylistFormState extends State<PlaylistForm>{
                 Text("Common Genres",
                 style: TextStyle(fontSize: 20)),
                 (_seeds['common_genres'].length == 0) ?
-                Padding(child:Text("No common genres, yet!",
-                style: TextStyle(fontSize: 20)),
+                Padding(child:Text("No common genres... yet! :D",
+                style: TextStyle(fontSize: 15)),
                 padding: EdgeInsets.only(top:30, bottom:30),
                 ) :
                 Container(child:MultiSelect(_seeds['common_genres'],

@@ -17,10 +17,12 @@ class _SplashPageState extends State<SplashPage> {
       } else {
         String username = await LoginHelper.getUserName();
         String url = await LoginHelper.getUserPhoto();
+        String token = await LoginHelper.getAuthToken();
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(name: username, imageUrl: url),
+            builder: (context) => HomePage(name: username, imageUrl: url, authToken: token, userID:user)
           ),
     );
       }
