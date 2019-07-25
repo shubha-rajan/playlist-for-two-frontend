@@ -246,7 +246,10 @@ class _UserPageState extends State<UserPage> {
   }
  
 
-
+  Widget _loadingBar = new Container(
+              height: 20.0,
+              child: new Center(child: new LinearProgressIndicator()),
+            );
 
   @override
   Widget build(BuildContext context) {
@@ -301,9 +304,12 @@ class _UserPageState extends State<UserPage> {
                 ),
               width: 400,),
               Flexible(
-                child:TabBarView(
+                
+                child:(_friendStatus == 'pending') ? 
+                _loadingBar :
+                TabBarView(
                 children: [
-                  (_friendStatus== 'accepted') ? 
+                  (_friendStatus == 'accepted') ? 
                       _playlistListView(context, _playlists) : 
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
