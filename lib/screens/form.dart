@@ -5,8 +5,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 
 class PlaylistForm extends StatefulWidget {
-  PlaylistForm({Key key, this.friendID, this.name}) : super(key: key);
-  final String friendID;
+  PlaylistForm({Key key, this.userID, this.name}) : super(key: key);
+  final String userID;
   final String name;
 
   @override
@@ -25,7 +25,7 @@ class _PlaylistFormState extends State<PlaylistForm>{
     String token = await LoginHelper.getAuthToken();
     String userID = await LoginHelper.getLoggedInUser();
     
-    dynamic response = await http.get("${DotEnv().env['P42_API']}/intersection?user_id=$userID&friend_id=${widget.friendID}", headers: {'authorization': token});
+    dynamic response = await http.get("${DotEnv().env['P42_API']}/intersection?user_id=$userID&friend_id=${widget.userID}", headers: {'authorization': token});
     return json.decode(response.body);
   }
 

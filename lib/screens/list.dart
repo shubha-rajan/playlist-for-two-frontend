@@ -115,7 +115,7 @@ class _ListPageState extends State<ListPage> {
         itemBuilder: (context, index) {
           String name = (data[index] is String) ? data[index] : data[index]['name'];
           return ListTile(
-            title: Text("${index +1} .  ${name}"),
+            title: Text("${index +1} .  $name"),
           );
         },
       );
