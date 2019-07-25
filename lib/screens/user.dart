@@ -364,8 +364,10 @@ class _UserPageState extends State<UserPage> {
     String authToken = await LoginHelper.getAuthToken();
     if (friendID == selfID){
         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:name, imageUrl: imageURL, userID: selfID, authToken: authToken,)));
-      }
-      _viewUser(friendID, friendName);
+      } else {
+        _viewUser(friendID, friendName);
+    }
+      
   }
 
 Widget _friendListView(BuildContext context, List data) {
