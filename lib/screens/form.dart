@@ -16,11 +16,11 @@ class PlaylistForm extends StatefulWidget {
 
 class _PlaylistFormState extends State<PlaylistForm>{
   dynamic _seeds;
-  List<dynamic> _selectedArtists = [];
-  List<dynamic> _selectedSongs = [];
-  List<dynamic> _selectedGenres = [];
+  List<String> _selectedArtists = [];
+  List<String> _selectedSongs = [];
+  List<String> _selectedGenres = [];
   bool _filterExplicit = false;
-  Map _features = {
+  Map<String, Map> _features = {
     'valence': {
       'min': 0.0,
       'max' : 1.0
@@ -67,7 +67,46 @@ class _PlaylistFormState extends State<PlaylistForm>{
     return json.decode(response.body);
   }
 
+  Future<void> _createPlaylist() async{
+    String authToken = await LoginHelper.getAuthToken();
+    String selfID = await LoginHelper.getLoggedInUser();
+
+    Map<String, List> seeds =  {
+        "artists": _selectedArtists,
+        "songs" : _selectedSongs,
+        "genres" : _selectedGenres,
+    };
+
+    dynamic response = await http.post("${DotEnv().env['P42_API']}/new-playlist?user_id=$selfID&friend_id=${widget.userID}", 
+    headers:{'authorization': authToken},
+    body: {"seeds": json.encode(seeds), "features":json.encode(_features)});
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+    } else{
+      _errorDialog();
+    }
+  }
   
+  Future<void> _errorDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Could not generate playlist'),
+        content:Text('There was a problem creating your playlist. Please try again later'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Dismiss'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+  }
 
 
   void setData() async {
@@ -115,7 +154,26 @@ class _PlaylistFormState extends State<PlaylistForm>{
     );
   }
 
-  Widget buildMultiSelectLayout(title, fieldName, fieldList ) {
+  void updateSelectedArtists(list){
+    setState(() {
+       _selectedArtists = list;
+    });
+  }
+
+  void updateSelectedSongs(list){
+    setState(() {
+       _selectedSongs = list;
+    });
+  }
+
+  void updateSelectedGenres(list){
+    setState(() {
+       _selectedGenres = list;
+    });
+  }
+
+
+  Widget buildMultiSelectLayout(title, fieldName, callback ) {
     return(
       Column(children: <Widget>[
         SizedBox(height: 20),
@@ -130,9 +188,7 @@ class _PlaylistFormState extends State<PlaylistForm>{
         child:MultiSelect( _seeds['common_$fieldName'],
           (_selectedSongs.length + _selectedArtists.length + _selectedGenres.length),
           onSelectionChanged: (selectedList) {
-            setState(() {
-                  fieldList = selectedList;
-            });
+            callback(selectedList);
             },
           ), 
         width:300),
@@ -165,9 +221,9 @@ class _PlaylistFormState extends State<PlaylistForm>{
             Flex(
               direction: Axis.vertical,
               children:<Widget>[
-                buildMultiSelectLayout("Common Songs", 'songs', _selectedSongs ),
-                buildMultiSelectLayout("Common Artists", 'artists', _selectedArtists ),
-                buildMultiSelectLayout("Common Genres", 'genres', _selectedArtists ),
+                buildMultiSelectLayout("Common Songs", 'songs', updateSelectedSongs ),
+                buildMultiSelectLayout("Common Artists", 'artists', updateSelectedArtists ),
+                buildMultiSelectLayout("Common Genres", 'genres', updateSelectedGenres ),
                 SizedBox(height:20),
                 Text("Track Features",
                 style: TextStyle(fontSize: 20)),
@@ -198,7 +254,7 @@ class _PlaylistFormState extends State<PlaylistForm>{
                           setState(() => _filterExplicit = val)
                 ),
                   MaterialButton(
-                    onPressed: null,
+                    onPressed: _createPlaylist,
                     child: Text('Make a Playlist!',
                           style: TextStyle(fontSize: 15)
                         ),
@@ -277,7 +333,7 @@ class _MultiSelectState extends State<MultiSelect> {
     List<Widget> choices = List();
     _displayed.forEach((item) {
       String name = (item is String) ? item : item['name'];
-      String id = (item is String) ? item : item['name'];
+      String id = (item is String) ? item : item['id'];
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
         child: ChoiceChip(
@@ -289,7 +345,7 @@ class _MultiSelectState extends State<MultiSelect> {
               _selected.remove(id);
               });
               widget.onSelectionChanged(_selected);
-            } else if (widget.totalSelected >=5) {
+            } else if (widget.totalSelected >= 5) {
                 _seedLimitDialog();
               } else {
               setState(() {
