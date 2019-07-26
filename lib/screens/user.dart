@@ -59,6 +59,8 @@ class _UserPageState extends State<UserPage> {
     headers:{'authorization': authToken});
     if (response.statusCode == 200) {
       setData();
+    } else{
+      _errorDialog();
     }
   }
 
@@ -119,6 +121,26 @@ class _UserPageState extends State<UserPage> {
       });
   }
 
+  Future<void> _errorDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Could not generate playlist'),
+        content:Text('There was a problem creating your grab bag playlist. This can occur if either you or ${widget.name} have a limited listening history or if you do not have any common songs, artists, or genres. Try making a custom playlist to discover new music together and then try again!'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Dismiss'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+  }
 
 
   Future<void> _grabBagPlaylistDialog() async {
