@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
+import 'package:playlist_for_two/screens/user.dart';
 
 class PlaylistForm extends StatefulWidget {
   PlaylistForm({Key key, this.userID, this.name}) : super(key: key);
@@ -81,7 +82,9 @@ class _PlaylistFormState extends State<PlaylistForm>{
     headers:{'authorization': authToken},
     body: {"seeds": json.encode(seeds), "features":json.encode(_features)});
     if (response.statusCode == 200) {
-      Navigator.pop(context);
+      Navigator.pushReplacement(context, 
+        MaterialPageRoute(builder: (context) => UserPage(name: widget.name, userID: widget.userID, ))
+      );
     } else{
       _errorDialog();
     }
