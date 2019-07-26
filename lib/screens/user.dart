@@ -60,7 +60,7 @@ class _UserPageState extends State<UserPage> {
     if (response.statusCode == 200) {
       setData();
     } else{
-      _errorDialog();
+      _errorDialog('Could not generate playlist', 'There was a problem creating your grab bag playlist. This can occur if either you or ${widget.name} have a limited listening history or if you do not have any common songs, artists, or genres. Try making a custom playlist to discover new music together and then try again!');
     }
   }
 
@@ -121,14 +121,14 @@ class _UserPageState extends State<UserPage> {
       });
   }
 
-  Future<void> _errorDialog() async {
+  Future<void> _errorDialog(String titleText, String contentText) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Could not generate playlist'),
-        content:Text('There was a problem creating your grab bag playlist. This can occur if either you or ${widget.name} have a limited listening history or if you do not have any common songs, artists, or genres. Try making a custom playlist to discover new music together and then try again!'),
+        title: Text(titleText),
+        content:Text(contentText),
         actions: <Widget>[
           FlatButton(
             child: Text('Dismiss'),
@@ -322,7 +322,6 @@ class _UserPageState extends State<UserPage> {
                 ),
               width: 400,),
               Flexible(
-                
                 child:(_friendStatus == 'pending') ? 
                 _loadingBar :
                 TabBarView(

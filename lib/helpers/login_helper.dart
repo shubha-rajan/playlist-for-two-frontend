@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginHelper {
-
   static Future<String> getLoggedInUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('UID') ?? '';
@@ -21,7 +20,6 @@ class LoginHelper {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('imageUrl') ?? '';
   }
-
 
   static Future<bool> setLoggedInUser(String id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

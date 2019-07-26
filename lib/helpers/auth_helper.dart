@@ -11,11 +11,7 @@ import 'package:playlist_for_two/screens/home.dart';
 import 'package:playlist_for_two/helpers/navigation_helper.dart';
 
 
-
-
-
 class AuthHelper {
-
   static void launchSpotifyLogin(String stateKey)  async {
     var clientId = DotEnv().env['SPOTIFY_CLIENT_ID'];
     var redirectUri = DotEnv().env['SPOTIFY_REDIRECT_URI'];

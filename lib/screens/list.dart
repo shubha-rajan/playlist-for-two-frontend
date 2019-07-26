@@ -10,12 +10,24 @@ class ListPage extends StatefulWidget {
 
   @override
   _ListPageState createState() => _ListPageState();
-
 }
 
 
 class _ListPageState extends State<ListPage> {
+  dynamic _genres;
+  Widget _loadingBar = new Container(
+              height: 20.0,
+              child: new Center(child: new LinearProgressIndicator()),
+            );
 
+  dynamic _songData;
+
+  @override
+  void didChangeDependencies() {
+    setSongData();
+    setGenres();
+    super.didChangeDependencies();
+}
 
    @override
    void setState(fn) {
@@ -23,9 +35,6 @@ class _ListPageState extends State<ListPage> {
       super.setState(fn);
     }
   }
-
-  dynamic _songData;
-  dynamic _genres;
 
   Future<Map> getSongData() async {
     String token = await LoginHelper.getAuthToken();
@@ -57,52 +66,6 @@ class _ListPageState extends State<ListPage> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    setSongData();
-    setGenres();
-    super.didChangeDependencies();
-}
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length:3,
-      child:Scaffold (
-      appBar: AppBar(
-        title: Text("My Listening Data"),
-        bottom:TabBar(
-          tabs: [
-                Tab(text: "Top Songs",),
-                Tab(text: "Top Artists"),
-                Tab(text: "Top Genres")
-              ],
-        )
-      ),
-      body:Flex(
-        direction: Axis.vertical,
-        children: [Expanded(
-        child: TabBarView(
-          children: [
-            (_songData!=null) ? _itemListView(context, _songData['top_songs']) : _loadingBar,
-            (_songData!=null)  ? _itemListView(context, _songData['top_artists']) : 
-            _loadingBar,
-            (_genres!=null) ? _itemListView(context, _genres.keys.toList()) : 
-            _loadingBar
-          ] ,
-        )
-      )
-        ]
-      )
-      )
-    );
-  }
-
-  Widget _loadingBar = new Container(
-              height: 20.0,
-              child: new Center(child: new LinearProgressIndicator()),
-            );
-
   Widget _itemListView(BuildContext context, List data) {
     
     return ListView.separated(
@@ -121,4 +84,38 @@ class _ListPageState extends State<ListPage> {
       );
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length:3,
+      child:Scaffold (
+        appBar: AppBar(
+          title: Text("My Listening Data"),
+          bottom:TabBar(
+            tabs: [
+              Tab(text: "Top Songs",),
+              Tab(text: "Top Artists"),
+              Tab(text: "Top Genres")
+            ],
+          )
+        ),
+        body:Flex(
+          direction: Axis.vertical,
+          children: [
+            Expanded(
+              child: TabBarView(
+                children: [
+                  (_songData!=null) ? _itemListView(context, _songData['top_songs']) : _loadingBar,
+                  (_songData!=null)  ? _itemListView(context, _songData['top_artists']) : 
+                  _loadingBar,
+                  (_genres!=null) ? _itemListView(context, _genres.keys.toList()) : 
+                  _loadingBar
+                ] ,
+              )
+            )
+          ]
+        )
+      )
+    );
+  }
 }

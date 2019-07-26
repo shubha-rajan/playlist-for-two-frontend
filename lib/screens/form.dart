@@ -7,20 +7,15 @@ import 'package:playlist_for_two/screens/user.dart';
 
 class PlaylistForm extends StatefulWidget {
   PlaylistForm({Key key, this.userID, this.name}) : super(key: key);
-  final String userID;
+
   final String name;
+  final String userID;
 
   @override
   _PlaylistFormState createState() => _PlaylistFormState();
-
 }
 
 class _PlaylistFormState extends State<PlaylistForm>{
-  dynamic _seeds;
-  List<String> _selectedArtists = [];
-  List<String> _selectedSongs = [];
-  List<String> _selectedGenres = [];
-  bool _filterExplicit = false;
   Map<String, Map> _features = {
     'valence': {
       'min': 0.0,
@@ -60,6 +55,23 @@ class _PlaylistFormState extends State<PlaylistForm>{
     }
   };
 
+  bool _filterExplicit = false;
+  Widget _loadingBar = new Container(
+              height: 20.0,
+              child: new Center(child: new LinearProgressIndicator()),
+            );
+
+  dynamic _seeds;
+  List<String> _selectedArtists = [];
+  List<String> _selectedGenres = [];
+  List<String> _selectedSongs = [];
+
+  @override
+  void didChangeDependencies() {
+    setData();
+    super.didChangeDependencies();
+  }
+
   Future<dynamic> getSeeds() async {
     String token = await LoginHelper.getAuthToken();
     String userID = await LoginHelper.getLoggedInUser();
@@ -89,7 +101,7 @@ class _PlaylistFormState extends State<PlaylistForm>{
       _errorDialog();
     }
   }
-  
+
   Future<void> _errorDialog() async {
   return showDialog<void>(
     context: context,
@@ -111,18 +123,11 @@ class _PlaylistFormState extends State<PlaylistForm>{
   );
   }
 
-
   void setData() async {
     dynamic seeds = await getSeeds();
     setState(() {
       _seeds = seeds;
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    setData();
-    super.didChangeDependencies();
   }
 
   Widget rangeSliderDisplayBuilder(feature, description, min, max) {
@@ -175,7 +180,6 @@ class _PlaylistFormState extends State<PlaylistForm>{
     });
   }
 
-
   Widget buildMultiSelectLayout(title, fieldName, callback ) {
     return(
       Column(children: <Widget>[
@@ -198,11 +202,6 @@ class _PlaylistFormState extends State<PlaylistForm>{
       ],)
     );
   }
-
-  Widget _loadingBar = new Container(
-              height: 20.0,
-              child: new Center(child: new LinearProgressIndicator()),
-            );
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +271,6 @@ class _PlaylistFormState extends State<PlaylistForm>{
         _loadingBar
     );
   }
-
 }
 
 
@@ -281,20 +279,22 @@ class _PlaylistFormState extends State<PlaylistForm>{
 // and https://medium.com/@KarthikPonnam/flutter-loadmore-in-listview-23820612907d 
 class MultiSelect extends StatefulWidget {
   MultiSelect(this.data, this.totalSelected, {this.onSelectionChanged});
-  final int totalSelected;
+
   final List<dynamic> data;
-  final Function(List<String>) onSelectionChanged;
-  
+  final int totalSelected;
+
   @override
   _MultiSelectState createState() => _MultiSelectState();
+
+  final Function(List<String>) onSelectionChanged;
 }
 
 class _MultiSelectState extends State<MultiSelect> {
-  
-  List<String> _selected = [];
-  List <dynamic> _displayed = [];
-  int present = 0;
   int perPage = 5;
+  int present = 0;
+
+  List <dynamic> _displayed = [];
+  List<String> _selected = [];
 
   @override
   void initState() {
@@ -382,7 +382,8 @@ class _MultiSelectState extends State<MultiSelect> {
     
     return choices;
   }
-   @override
+
+  @override
   Widget build(BuildContext context) {
     return Wrap(
       children: _buildChoiceList(),

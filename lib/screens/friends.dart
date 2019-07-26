@@ -17,19 +17,24 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
+  dynamic _friends={
+    'accepted':[],
+    'incoming':[],
+    'sent':[],
+  };
+
+  @override
+  void didChangeDependencies() {
+    setData();
+    super.didChangeDependencies();
+  }
+
   @override
   void setState(fn) {
     if(mounted){
       super.setState(fn);
     }
   }
-  
-  dynamic _friends={
-    'accepted':[],
-    'incoming':[],
-    'sent':[],
-  };
-  
 
   void _findFriends(){
     Navigator.push(context, 
@@ -58,19 +63,13 @@ class _FriendsPageState extends State<FriendsPage> {
       _friends= data['friends'];
     });
   }
-  
+
   void _viewUser(userID, name) {
     Navigator.push(context,
     MaterialPageRoute(
       builder: (context) => UserPage(userID: userID, name:name)
     )
   );
-  }
-
-  @override
-  void didChangeDependencies() {
-    setData();
-    super.didChangeDependencies();
   }
 
   Widget build(BuildContext context) {
@@ -102,6 +101,7 @@ class _FriendsPageState extends State<FriendsPage> {
       )
     );
   }
+
   Widget _friendListView(BuildContext context, List data) {
     return ListView.builder(
         scrollDirection: Axis.vertical,

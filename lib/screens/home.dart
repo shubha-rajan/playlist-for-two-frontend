@@ -15,9 +15,10 @@ import 'package:playlist_for_two/screens/playlist_info.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.name, this.imageUrl, this.authToken, this.userID}) : super(key: key);
-  final String name;
-  final String imageUrl;
+
   final String authToken;
+  final String imageUrl;
+  final String name;
   final String userID;
 
   @override
@@ -30,7 +31,14 @@ class _HomePageState extends State<HomePage> {
     'incoming':[],
     'sent':[],
   };
+
   List<dynamic> _playlists = [];
+
+  @override
+  void didChangeDependencies() {
+    setData();
+    super.didChangeDependencies();
+  }
 
   @override
   void setState(fn) {
@@ -73,7 +81,7 @@ class _HomePageState extends State<HomePage> {
       _playlists= playlists;
     });
   }
-  
+
   void _viewUser(userID, name) {
     Navigator.push(context,
     MaterialPageRoute(
@@ -81,13 +89,6 @@ class _HomePageState extends State<HomePage> {
     )
   );
   }
-
-  @override
-  void didChangeDependencies() {
-    setData();
-    super.didChangeDependencies();
-  }
-
 
   void _getUserSongs() async {
     Navigator.push(
@@ -97,7 +98,6 @@ class _HomePageState extends State<HomePage> {
       )
     );
   }
-
 
   Widget _friendListView(BuildContext context, List data) {
     return ListView.separated(
@@ -117,6 +117,7 @@ class _HomePageState extends State<HomePage> {
         },
       );
   }
+
   Widget _playlistListView(BuildContext context, List data) {
     return ListView.separated(
         separatorBuilder:(context, index) => Divider(
@@ -136,6 +137,7 @@ class _HomePageState extends State<HomePage> {
         },
       );
   }
+
   Widget _userCard() {
     return ( Row(
       children: <Widget>[
@@ -184,7 +186,6 @@ class _HomePageState extends State<HomePage> {
     )
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +262,6 @@ class DrawerListView extends StatelessWidget {
     );
   }
     return ListView(
-      
       children: <Widget>[
           Container(
             child:Image.asset('graphics/logo-white.png'),

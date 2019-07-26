@@ -9,31 +9,29 @@ import 'package:url_launcher/url_launcher.dart';
 
 class PlaylistInfo extends StatefulWidget {
   PlaylistInfo({Key key, this.playlist}) : super(key: key);
-  final dynamic playlist;
 
+  final dynamic playlist;
 
   @override
   _PlaylistInfoState createState() => _PlaylistInfoState();
-
 }
 
 
 class _PlaylistInfoState extends State<PlaylistInfo> {
-   @override
-   void setState(fn) {
-    if(mounted){
-      super.setState(fn);
-    }
-  }
-
-  dynamic _tracks= [];
-  String _title;
-  String _description;
-  String _newTitle;
-  String _newDescription;
-
-  TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+
+  String _description;
+  String _newDescription;
+  String _newTitle;
+  String _title;
+  dynamic _tracks= [];
+
+  @override
+    void didChangeDependencies() {
+      _setTracks();
+      super.didChangeDependencies();
+  }
 
   @override
   void dispose() {
@@ -52,6 +50,13 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     super.initState();
   }
 
+   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
+
   void _updateDescription(){
     setState((){
       _newDescription = descriptionController.text;
@@ -63,7 +68,6 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
       _newTitle = titleController.text;
     });
   }
-
 
   void _setTitleDescription(){
     setState(() {
@@ -178,12 +182,6 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
   );
   }
 
-  @override
-    void didChangeDependencies() {
-      _setTracks();
-      super.didChangeDependencies();
-  }
-
   void _openPlaylistInSpotify() async{
     String playlistID = widget.playlist['uri'].substring(17);
     String url = 'https://open.spotify.com/user/${DotEnv().env['SPOTIFY_USER_ID']}/playlist/$playlistID';
@@ -192,6 +190,7 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
       } else {
         throw 'Could not launch $url }';
       }
+
   }
 
   void _openTrackInSpotify(trackID) async{
@@ -202,6 +201,25 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
       } else {
         throw 'Could not launch $url ';
       }
+  }
+
+  Widget _playlistTrackView(BuildContext context, List data) {
+    return ListView.separated(
+        separatorBuilder:(context, index) => Divider(
+        color: Colors.blueGrey,
+      ),
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text("${data[index]['name']} - ${data[index]['artists'][0]}"),
+            onTap: (){
+              _openTrackInSpotify(data[index]['id']);
+            },
+          );
+        },
+      );
   }
 
   @override
@@ -280,23 +298,5 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
       )
       )
     );
-  }
-  Widget _playlistTrackView(BuildContext context, List data) {
-    return ListView.separated(
-        separatorBuilder:(context, index) => Divider(
-        color: Colors.blueGrey,
-      ),
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text("${data[index]['name']} - ${data[index]['artists'][0]}"),
-            onTap: (){
-              _openTrackInSpotify(data[index]['id']);
-            },
-          );
-        },
-      );
   }
 }

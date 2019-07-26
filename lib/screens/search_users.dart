@@ -16,22 +16,27 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchController = TextEditingController();
 
-   @override
-   void setState(fn) {
-    if(mounted){
-      super.setState(fn);
-    }
-  }
-  
+  dynamic _searchResults = [];
+  dynamic _users = [];
+
   @override
   void dispose() {
     searchController.dispose();
     super.dispose();
   }
 
-  dynamic _users = [];
-  dynamic _searchResults = [];
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(_updateSearchTerm);
+  }
 
+   @override
+   void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
 
   void _updateSearchTerm() {
     String _searchTerm = searchController.text;
@@ -44,14 +49,6 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       _searchResults = results;
     });
-  }
-
-    
-
-  @override
-  void initState() {
-    super.initState();
-    searchController.addListener(_updateSearchTerm);
   }
 
   Future<List> getUsers() async {
@@ -76,6 +73,21 @@ class _SearchPageState extends State<SearchPage> {
   );
   }
 
+  Widget _searchListView(BuildContext context, List searchResults) {
+    return ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: searchResults.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(searchResults[index]['name']),
+            onTap: (){
+              viewUser(searchResults[index]['spotify_id'], searchResults[index]['name']);
+            },
+          );
+        },
+      );
+  }
 
   Widget build(BuildContext context) {
     setUsers();
@@ -102,19 +114,6 @@ class _SearchPageState extends State<SearchPage> {
       ) 
     );
   }
-  Widget _searchListView(BuildContext context, List searchResults) {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: searchResults.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(searchResults[index]['name']),
-            onTap: (){
-              viewUser(searchResults[index]['spotify_id'], searchResults[index]['name']);
-            },
-          );
-        },
-      );
-  }
+
+  
 }
