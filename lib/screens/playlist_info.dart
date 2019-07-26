@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class PlaylistInfo extends StatefulWidget {
@@ -51,7 +52,25 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
       super.didChangeDependencies();
   }
 
+  void _openPlaylistInSpotify() async{
+    String playlistID = widget.playlist['uri'].substring(17);
+    String url = 'https://open.spotify.com/user/${DotEnv().env['SPOTIFY_USER_ID']}/playlist/$playlistID';
+    if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url }';
+      }
+  }
 
+  void _openTrackInSpotify(trackID) async{
+    
+    String url = 'https://open.spotify.com/track/$trackID';
+    if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url ';
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +94,13 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
               Text(widget.playlist['description']['description'],
               style: TextStyle(fontSize: 15)),
               SizedBox(height:40),
+              MaterialButton(
+                child: Text('Open in Spotify'),
+                onPressed: _openPlaylistInSpotify,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                textColor: Colors.white,
+                color:Colors.green,
+                )
             ],
             ),
             margin: EdgeInsets.only(left: 20.0, right: 20.0),
@@ -124,6 +150,9 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text("${data[index]['name']} - ${data[index]['artists'][0]}"),
+            onTap: (){
+              _openTrackInSpotify(data[index]['id']);
+            },
           );
         },
       );

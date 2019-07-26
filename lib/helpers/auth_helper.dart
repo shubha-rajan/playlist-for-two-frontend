@@ -23,7 +23,7 @@ class AuthHelper {
 
     final url = Uri.encodeFull('https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&state=$stateKey&scope=$scopes&show_dialog=true');
 
-      if (await canLaunch(url)) {
+    if (await canLaunch(url)) {
         await launch(url);
       } else {
         throw 'Could not launch $url';
