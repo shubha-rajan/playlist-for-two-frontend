@@ -62,7 +62,7 @@ class AuthHelper {
     
    locator<NavigationService>().navigateTo(
        MaterialPageRoute(
-            builder: (context) => HomePage(name: json.decode(userInfo.body)['name'], imageUrl: url, userID:json.decode(userInfo.body)['name'], authToken:token),
+            builder: (context) => HomePage(name: json.decode(userInfo.body)['name'], imageUrl: url, userID:json.decode(userInfo.body)['spotify_id'], authToken:token),
           )
     );
   }

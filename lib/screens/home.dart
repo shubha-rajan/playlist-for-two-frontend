@@ -98,6 +98,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
   Widget _friendListView(BuildContext context, List data) {
     return ListView.separated(
       separatorBuilder:(context, index) => Divider(

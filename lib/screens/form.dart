@@ -78,7 +78,7 @@ class _PlaylistFormState extends State<PlaylistForm>{
         "genres" : _selectedGenres,
     };
 
-    dynamic response = await http.post("${DotEnv().env['P42_API']}/new-playlist?user_id=$selfID&friend_id=${widget.userID}", 
+    dynamic response = await http.post("${DotEnv().env['P42_API']}/new-playlist?user_id=$selfID&friend_id=${widget.userID}&filter_explicit=$_filterExplicit", 
     headers:{'authorization': authToken},
     body: {"seeds": json.encode(seeds), "features":json.encode(_features)});
     if (response.statusCode == 200) {

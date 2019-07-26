@@ -55,7 +55,7 @@ class _UserPageState extends State<UserPage> {
   Future<void> _createPlaylist() async{
     String authToken = await LoginHelper.getAuthToken();
     String selfID = await LoginHelper.getLoggedInUser();
-    dynamic response = await http.post("${DotEnv().env['P42_API']}/new-playlist?user_id=$selfID&friend_id=${widget.userID}", 
+    dynamic response = await http.post("${DotEnv().env['P42_API']}/new-playlist?user_id=$selfID&friend_id=${widget.userID}&filter_explicit=$_filterExplicit", 
     headers:{'authorization': authToken});
     if (response.statusCode == 200) {
       setData();
@@ -188,10 +188,6 @@ class _UserPageState extends State<UserPage> {
     Navigator.push(context, 
     MaterialPageRoute(builder:(context) => PlaylistForm(userID: widget.userID, name:widget.name)));
   }
-
-
- 
-
 
   void setFriends() async{
     String selfID = await LoginHelper.getLoggedInUser();
