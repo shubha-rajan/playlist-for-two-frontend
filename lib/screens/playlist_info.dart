@@ -27,6 +27,50 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
   }
 
   dynamic _tracks= [];
+  String _title;
+  String _description;
+  String _newTitle;
+  String _newDescription;
+
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _setTitleDescription();
+    titleController.addListener(_updateTitle);
+    descriptionController.addListener(_updateDescription);
+    titleController.text = widget.playlist['description']['name'];
+    descriptionController.text = widget.playlist['description']['description'];
+    super.initState();
+  }
+
+  void _updateDescription(){
+    setState((){
+      _newDescription = descriptionController.text;
+    });
+  }
+
+    void _updateTitle(){
+    setState((){
+      _newTitle = titleController.text;
+    });
+  }
+
+
+  void _setTitleDescription(){
+    setState(() {
+      _title = widget.playlist['description']['name'];
+      _description= widget.playlist['description']['description'];
+    });
+  }
 
   Future<dynamic> _getTracks() async{
     String token = await LoginHelper.getAuthToken();
@@ -44,6 +88,94 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     setState(() {
       _tracks = data;
     });
+  }
+
+  Future<void> _updateTitleDescription() async {
+    
+    setState(() {
+      _title = _newTitle;
+      _description = _newDescription;
+    });
+  }
+
+  Future<void> _editDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Edit Playlist Details'),
+        content:Container(
+          height:400,
+          child: Column(children: <Widget>[
+            Flex(
+              mainAxisSize: MainAxisSize.min,
+              direction: Axis.vertical,
+              children:<Widget>[
+                Flexible(
+                  fit:FlexFit.loose,
+                  child:TextField(
+                  controller: titleController,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.blueGrey,
+                        width: 1
+                      )
+                    )
+                  )
+                  )
+                ),
+              ]
+            ),
+            
+            SizedBox(height:20),
+            Flex(
+            mainAxisSize: MainAxisSize.min,
+            direction: Axis.vertical,
+            children:<Widget>[
+              Flexible(
+              fit: FlexFit.loose,
+              child:TextField(
+              controller: descriptionController,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.blueGrey,
+                    width: 1
+                  )
+                ),
+              ),
+            )
+            )
+            ],
+            
+            )
+          ]
+          )
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: Text('Save'),
+            onPressed: () {
+              _updateTitleDescription();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    }
+  );
   }
 
   @override
@@ -88,19 +220,29 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
           SizedBox(height:40),
           Container(child: 
            Column(children: <Widget>[
-              Text(widget.playlist['description']['name'], 
+              Text(_title ?? widget.playlist['description']['title'], 
               style: TextStyle(fontSize: 20)),
               SizedBox(height:40),
-              Text(widget.playlist['description']['description'],
+              Text(_description ?? widget.playlist['description']['description'],
               style: TextStyle(fontSize: 15)),
               SizedBox(height:40),
-              MaterialButton(
-                child: Text('Open in Spotify'),
-                onPressed: _openPlaylistInSpotify,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                textColor: Colors.white,
-                color:Colors.green,
-                )
+              Row (
+                mainAxisAlignment:MainAxisAlignment.center,
+                children:<Widget>[
+                  MaterialButton(
+                    child: Text('Edit Playlist Details'),
+                    onPressed: _editDialog,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  ),
+                  MaterialButton(
+                    child: Text('Open in Spotify'),
+                    onPressed: _openPlaylistInSpotify,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                    textColor: Colors.white,
+                    color:Colors.green,
+                  )
+              ])
+              
             ],
             ),
             margin: EdgeInsets.only(left: 20.0, right: 20.0),

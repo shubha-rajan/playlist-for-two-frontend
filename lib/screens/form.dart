@@ -178,7 +178,7 @@ class _PlaylistFormState extends State<PlaylistForm>{
       Column(children: <Widget>[
         SizedBox(height: 20),
       Text(title,
-      style: TextStyle(fontSize: 20)),
+      style: TextStyle(fontSize: 15)),
       (_seeds['common_$fieldName'].length == 0) ?
       Padding(child:Text("No common $fieldName... yet! :D",
       style: TextStyle(fontSize: 15)),
@@ -225,7 +225,7 @@ class _PlaylistFormState extends State<PlaylistForm>{
                 buildMultiSelectLayout("Common Artists", 'artists', updateSelectedArtists ),
                 buildMultiSelectLayout("Common Genres", 'genres', updateSelectedGenres ),
                 SizedBox(height:20),
-                Text("Track Features",
+                Text("Fine-tune Your Playlist",
                 style: TextStyle(fontSize: 20)),
                 SizedBox(height:20),
                 Text('Tempo'), 
