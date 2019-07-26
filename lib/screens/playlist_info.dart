@@ -9,8 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class PlaylistInfo extends StatefulWidget {
   PlaylistInfo({Key key, this.playlist}) : super(key: key);
-
   final dynamic playlist;
+  
 
   @override
   _PlaylistInfoState createState() => _PlaylistInfoState();
@@ -55,6 +55,15 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     if(mounted){
       super.setState(fn);
     }
+  }
+
+  Future<String> getFriendID() async {
+    String selfID = await LoginHelper.getLoggedInUser();
+    List<String> playlistOwners = widget.playlist.owners;
+    String friendID = playlistOwners.firstWhere((item){
+      return (item != selfID);
+    });
+    return friendID;
   }
 
   void _updateDescription(){
