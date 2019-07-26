@@ -41,7 +41,7 @@ class _FriendsPageState extends State<FriendsPage> {
       MaterialPageRoute(
             builder: (context) => SearchPage()
       )
-    );
+    ).whenComplete(setData);
   }
 
   Future<Map> getData() async {
@@ -69,7 +69,7 @@ class _FriendsPageState extends State<FriendsPage> {
     MaterialPageRoute(
       builder: (context) => UserPage(userID: userID, name:name)
     )
-  );
+  ).whenComplete(setData);
   }
 
   Widget build(BuildContext context) {

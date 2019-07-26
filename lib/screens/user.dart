@@ -78,8 +78,19 @@ class _UserPageState extends State<UserPage> {
       return json.decode(response.body);
   }
 
-    void _removeFriend(){
-    print('TODO!');
+  Future<void> _removeFriend() async {
+    String authToken = await LoginHelper.getAuthToken();
+    String selfID = await LoginHelper.getLoggedInUser();
+    dynamic response = await http.post("${DotEnv().env['P42_API']}/remove-friend", 
+    headers:{'authorization': authToken},
+    body:{'user_id':selfID, 'friend_id':widget.userID});
+    if (response.statusCode == 200) {
+      setState(() {
+            _friendStatus ='none';
+      });
+    } else{
+      _errorDialog('An error occured', 'Could not remove friend. Please try again!');
+    }
   }
 
   void _requestFriend() async {
@@ -433,12 +444,11 @@ Widget _actionButton(BuildContext context, String status, Function requestFriend
     break;
     case 'requested': {
       button = MaterialButton(
-              onPressed: null,
-              child: Text('Friend Request Sent',
+              onPressed: removeFriend,
+              child: Text('Cancel Friend Request',
                     style: TextStyle(fontSize: 15)
                   ),
-                  textColor: Colors.white,
-                  color:Colors.blueAccent, 
+  
             );
     }
     break;

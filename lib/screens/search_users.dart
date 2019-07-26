@@ -29,6 +29,14 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     searchController.addListener(_updateSearchTerm);
+    setUsers();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    searchController.addListener(_updateSearchTerm);
+    setUsers();
   }
 
    @override
@@ -70,7 +78,7 @@ class _SearchPageState extends State<SearchPage> {
     MaterialPageRoute(
       builder: (context) => UserPage(userID: userID, name:name)
     )
-  );
+  ).whenComplete(setUsers);
   }
 
   Widget _searchListView(BuildContext context, List searchResults) {
@@ -90,7 +98,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget build(BuildContext context) {
-    setUsers();
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Find Friends'),    

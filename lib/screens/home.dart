@@ -85,9 +85,8 @@ class _HomePageState extends State<HomePage> {
   void _viewUser(userID, name) {
     Navigator.push(context,
     MaterialPageRoute(
-      builder: (context) => UserPage(userID: userID, name:name)
-    )
-  );
+      builder: (context) => UserPage(userID: userID, name:name))
+    ).whenComplete(setData);
   }
 
   void _getUserSongs() async {
@@ -194,7 +193,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("Playlist for Two"),
       ),
-      drawer: Drawer(child:DrawerListView()),
+      drawer: Drawer(child: DrawerListView(refreshCallback: setData,)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -239,7 +238,14 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class DrawerListView extends StatelessWidget {
+class DrawerListView extends StatefulWidget {
+  DrawerListView({Key key, this.refreshCallback}) : super(key: key);
+  final Function refreshCallback;
+  @override
+  _DrawerListViewState createState() => _DrawerListViewState();
+}
+
+class _DrawerListViewState extends State<DrawerListView>{
   @override
   Widget build(BuildContext context) {
     void _logOutUser() {
@@ -250,7 +256,7 @@ class DrawerListView extends StatelessWidget {
     void _getFriendRequests() async {
     Navigator.push(context, 
         MaterialPageRoute(builder: (context) => FriendsPage())
-      );
+      ).whenComplete(widget.refreshCallback);
 
     }
 
@@ -259,7 +265,7 @@ class DrawerListView extends StatelessWidget {
       MaterialPageRoute(
             builder: (context) => SearchPage()
       )
-    );
+    ).whenComplete(widget.refreshCallback);
   }
     return ListView(
       children: <Widget>[
