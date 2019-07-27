@@ -79,6 +79,7 @@ class _ListPageState extends State<ListPage> {
           String name = (data[index] is String) ? data[index] : data[index]['name'];
           return ListTile(
             title: Text("${index +1} .  $name"),
+            
           );
         },
       );
@@ -90,7 +91,7 @@ class _ListPageState extends State<ListPage> {
       length:3,
       child:Scaffold (
         appBar: AppBar(
-          title: Text("My Listening Data"),
+          title: Text("My Top Music"),
           bottom:TabBar(
             tabs: [
               Tab(text: "Top Songs",),
@@ -101,15 +102,16 @@ class _ListPageState extends State<ListPage> {
         ),
         body:Flex(
           direction: Axis.vertical,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
-              child: TabBarView(
+              child: (_songData==null) || (_genres==null) ?
+                _loadingBar :
+                TabBarView(
                 children: [
-                  (_songData!=null) ? _itemListView(context, _songData['top_songs']) : _loadingBar,
-                  (_songData!=null)  ? _itemListView(context, _songData['top_artists']) : 
-                  _loadingBar,
-                  (_genres!=null) ? _itemListView(context, _genres.keys.toList()) : 
-                  _loadingBar
+                  _itemListView(context, _songData['top_songs']),
+                  _itemListView(context, _songData['top_artists']),
+                  _itemListView(context, _genres.keys.toList())
                 ] ,
               )
             )

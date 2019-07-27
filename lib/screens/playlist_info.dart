@@ -160,53 +160,42 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
         content:Container(
           height:400,
           child: Column(children: <Widget>[
-            Flex(
+          
+              TextField(
+              controller: titleController,
+              
+            ),
+
+    
+            SizedBox(height:20),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: 300
+              ),
+              
+              child:Flex(
               mainAxisSize: MainAxisSize.min,
               direction: Axis.vertical,
               children:<Widget>[
                 Flexible(
                   fit:FlexFit.loose,
-                  child:TextField(
-                  controller: titleController,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.blueGrey,
-                        width: 1
-                      )
+                  child:SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    reverse: true,
+                    child:TextField(
+                      controller: descriptionController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      
                     )
                   )
-                  )
-                ),
+                ), 
+            
               ]
             ),
+            )
             
-            SizedBox(height:20),
-            Flex(
-            mainAxisSize: MainAxisSize.min,
-            direction: Axis.vertical,
-            children:<Widget>[
-              Flexible(
-              fit: FlexFit.loose,
-              child:TextField(
-              controller: descriptionController,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.blueGrey,
-                    width: 1
-                  )
-                ),
-              ),
-            )
-            )
-            ],
             
-            )
           ]
           )
         ),
@@ -214,6 +203,10 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
           FlatButton(
             child: Text('Cancel'),
             onPressed: () {
+              setState(() {
+                  _newTitle = _title ;
+                  _newDescription = _description;
+                });
               Navigator.of(context).pop();
             },
           ),

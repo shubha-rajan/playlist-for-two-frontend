@@ -128,7 +128,6 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(data[index]['description']['name']),
-            trailing: Icon(Icons.arrow_forward),
             onTap:(){
               Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index]))
               ).whenComplete(setData);
@@ -172,7 +171,7 @@ class _HomePageState extends State<HomePage> {
               MaterialButton(
                 
                 onPressed: _getUserSongs,
-                child: Text('My Song Data',
+                child: Text('My Top Music',
                   style: TextStyle(fontSize: 15)
                 ),
                 textColor: Colors.white,

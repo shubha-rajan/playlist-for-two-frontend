@@ -382,7 +382,6 @@ class _UserPageState extends State<UserPage> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(data[index]['description']['name']),
-            trailing: Icon(Icons.arrow_forward),
             onTap:(){
               Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index]))
               ).whenComplete(setData);
