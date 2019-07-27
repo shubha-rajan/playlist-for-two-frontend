@@ -1,16 +1,13 @@
-# playlist_for_two_frontend
+# Playlist for Two
 
-A new Flutter project.
+Playlist for Two is a social music discovery app integrated with Spotify that enables users to generate playlists based on common songs, artists, and genres using Spotify's recommendation engine. The mobile client for the app is cross-platform (ios/Android) and was built using [Flutter](https://flutter.dev/)
+
+Playlist for Two was developed by Shubha Rajan as a capstone project for [Ada Developers' Academy](https://adadevelopersacademy.org).
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Requirements to try it out:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- A [Spotify](spotify.com) account with a lengthy listening history or number of saved songs and followed artists.
+- A mobile phone or emulator.
+- A friend who also has both of the above!

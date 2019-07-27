@@ -13,36 +13,30 @@ var uuid = new Uuid(options: {
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
-  
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  var stateKey = uuid.v4(options: {
+  'rng': UuidUtil.cryptoRNG
+  });
+
    @override
    void setState(fn) {
     if(mounted){
       super.setState(fn);
     }
   }
-  
-  var stateKey = uuid.v4(options: {
-  'rng': UuidUtil.cryptoRNG
-  });
-
 
   initState() {
     super.initState();
     AuthHelper.initUriListener(stateKey);
   }
 
-  
-
   _loginPressed(){
     AuthHelper.launchSpotifyLogin(stateKey);
   }
-  
 
   @override
   Widget build(BuildContext context) {

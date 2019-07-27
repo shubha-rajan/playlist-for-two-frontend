@@ -10,12 +10,24 @@ class ListPage extends StatefulWidget {
 
   @override
   _ListPageState createState() => _ListPageState();
-
 }
 
 
 class _ListPageState extends State<ListPage> {
+  dynamic _genres;
+  Widget _loadingBar = new Container(
+              height: 20.0,
+              child: new Center(child: new LinearProgressIndicator()),
+            );
 
+  dynamic _songData;
+
+  @override
+  void didChangeDependencies() {
+    setSongData();
+    setGenres();
+    super.didChangeDependencies();
+}
 
    @override
    void setState(fn) {
@@ -23,9 +35,6 @@ class _ListPageState extends State<ListPage> {
       super.setState(fn);
     }
   }
-
-  dynamic _songData;
-  dynamic _genres;
 
   Future<Map> getSongData() async {
     String token = await LoginHelper.getAuthToken();
@@ -57,75 +66,58 @@ class _ListPageState extends State<ListPage> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    setSongData();
-    setGenres();
-    super.didChangeDependencies();
-}
+  Widget _itemListView(BuildContext context, List data) {
+    
+    return ListView.separated(
+        separatorBuilder:(context, index) => Divider(
+        color: Colors.blueGrey,
+      ),
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          String name = (data[index] is String) ? data[index] : data[index]['name'];
+          return ListTile(
+            title: Text("${index +1} .  $name"),
+            
+          );
+        },
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length:3,
       child:Scaffold (
-      appBar: AppBar(
-        title: Text("My Listening Data"),
-        bottom:TabBar(
-          tabs: [
-                Tab(text: "Top Songs",),
-                Tab(text: "Top Artists"),
-                Tab(text: "Top Genres")
-              ],
-        )
-      ),
-      body:Flex(
-        direction: Axis.vertical,
-        children: [Expanded(
-        child: TabBarView(
+        appBar: AppBar(
+          title: Text("My Top Music"),
+          bottom:TabBar(
+            tabs: [
+              Tab(text: "Top Songs",),
+              Tab(text: "Top Artists"),
+              Tab(text: "Top Genres")
+            ],
+          )
+        ),
+        body:Flex(
+          direction: Axis.vertical,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            (_songData!=null) ? _songArtistListView(context, _songData['top_songs']) : _loadingBar,
-            (_songData!=null)  ? _songArtistListView(context, _songData['top_artists']) : 
-            _loadingBar,
-            (_genres!=null) ? _genreListView(context, _genres.keys.toList()) : 
-            _loadingBar
-          ] ,
+            Expanded(
+              child: (_songData==null) || (_genres==null) ?
+                _loadingBar :
+                TabBarView(
+                children: [
+                  _itemListView(context, _songData['top_songs']),
+                  _itemListView(context, _songData['top_artists']),
+                  _itemListView(context, _genres.keys.toList())
+                ] ,
+              )
+            )
+          ]
         )
-      )
-        ]
-      )
       )
     );
-  }
-
-  Widget _loadingBar = new Container(
-              height: 20.0,
-              child: new Center(child: new LinearProgressIndicator()),
-            );
-
-  Widget _songArtistListView(BuildContext context, List data) {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text("${index +1} . ${data[index]['name']}"),
-          );
-        },
-      );
-  }
-
-    Widget _genreListView(BuildContext context, List data) {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text("${index + 1} . ${data[index]}"),
-          );
-        },
-      );
   }
 }

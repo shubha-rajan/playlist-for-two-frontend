@@ -17,26 +17,31 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
-   @override
-   void setState(fn) {
+  dynamic _friends={
+    'accepted':[],
+    'incoming':[],
+    'sent':[],
+  };
+
+  @override
+  void didChangeDependencies() {
+    setData();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void setState(fn) {
     if(mounted){
       super.setState(fn);
     }
   }
-  
-  dynamic _friends={
-    'incoming':[],
-    'sent':[],
-    'accepted':[]
-  };
-  
 
   void _findFriends(){
     Navigator.push(context, 
       MaterialPageRoute(
             builder: (context) => SearchPage()
       )
-    );
+    ).whenComplete(setData);
   }
 
   Future<Map> getData() async {
@@ -50,7 +55,6 @@ class _FriendsPageState extends State<FriendsPage> {
     } else {
       return _friends;
     }
-      
   }
 
   void setData() async {
@@ -59,31 +63,24 @@ class _FriendsPageState extends State<FriendsPage> {
       _friends= data['friends'];
     });
   }
-  
-  void viewUser(userID, name) {
+
+  void _viewUser(userID, name) {
     Navigator.push(context,
     MaterialPageRoute(
       builder: (context) => UserPage(userID: userID, name:name)
     )
-  );
-  }
-
-  @override
-  void didChangeDependencies() {
-    setData();
-    super.didChangeDependencies();
+  ).whenComplete(setData);
   }
 
   Widget build(BuildContext context) {
     
     return DefaultTabController(
-      length:3,
+      length:2,
       child: Scaffold(
       appBar: AppBar(
-        title: Text('Friends'),
+        title: Text('Friend Requests'),
         bottom: TabBar(
           tabs: [
-                Tab(text: "Friends"),
                 Tab(text: "New Requests",),
                 Tab(text: "Sent Requests"),
               ],
@@ -92,9 +89,8 @@ class _FriendsPageState extends State<FriendsPage> {
       ),
       body: TabBarView(
           children: [
-            _myListView(context, _friends['accepted']),
-            _myListView(context, _friends['incoming']),
-            _myListView(context, _friends['sent']),
+            _friendListView(context, _friends['incoming']),
+            _friendListView(context, _friends['sent']),
           ] ,
         ),
       floatingActionButton: FloatingActionButton(
@@ -105,7 +101,8 @@ class _FriendsPageState extends State<FriendsPage> {
       )
     );
   }
-  Widget _myListView(BuildContext context, List data) {
+
+  Widget _friendListView(BuildContext context, List data) {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
@@ -114,7 +111,7 @@ class _FriendsPageState extends State<FriendsPage> {
           return ListTile(
             title: Text(json.decode(data[index])['name']),
             onTap: (){
-              viewUser(json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
+              _viewUser(json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
             },
           );
         },

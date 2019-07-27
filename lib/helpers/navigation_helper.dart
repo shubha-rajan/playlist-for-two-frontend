@@ -14,7 +14,8 @@ void setupLocator() {
 class NavigationService {
     final GlobalKey<NavigatorState> navigatorKey =
         new GlobalKey<NavigatorState>();
+
     Future<dynamic> navigateTo(MaterialPageRoute route) {
       return navigatorKey.currentState.pushReplacement(route);
     }
-  }
+}

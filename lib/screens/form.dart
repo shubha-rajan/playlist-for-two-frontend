@@ -3,32 +3,76 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
+import 'package:playlist_for_two/screens/user.dart';
 
 class PlaylistForm extends StatefulWidget {
-  PlaylistForm({Key key, this.friendID, this.name}) : super(key: key);
-  final String friendID;
+  PlaylistForm({Key key, this.userID, this.name}) : super(key: key);
+
   final String name;
+  final String userID;
 
   @override
   _PlaylistFormState createState() => _PlaylistFormState();
-
 }
 
 class _PlaylistFormState extends State<PlaylistForm>{
+
   dynamic _seeds;
-<<<<<<< Updated upstream
-  List<dynamic> _selectedArtists = [];
-  List<dynamic> _selectedSongs = [];
-  List<dynamic> _selectedGenres = [];
-  bool _filterExplicit = false;
-=======
+
   List<String> _selectedArtists = [];
   List<String> _selectedGenres = [];
   List<String> _selectedSongs = [];
+  bool _filterExplicit = false;
   dynamic _selfGenres = [];
   dynamic _userGenres = [];
   List<String> _selectedSelfGenres = [];
   List<String> _selectedUserGenres = [];
+
+  Map<String, Map> _features = {
+    'valence': {
+      'min': 0.0,
+      'max' : 1.0
+    },
+    'danceability': {
+      'min': 0.0,
+      'max' : 1.0
+    },
+    'energy': {
+      'min': 0.0,
+      'max' : 1.0
+    },
+    'loudness': {
+      'min': -30.0,
+      'max' : 0.0
+    },
+    'speechiness': {
+      'min': 0.0,
+      'max' : 1.0
+    },
+    'acousticness': {
+      'min': 0.0,
+      'max' : 1.0
+    },
+    'liveness': {
+      'min': 0.0,
+      'max' : 1.0
+    },
+    'instrumentalness': {
+      'min': 0.0,
+      'max' : 1.0
+    },
+    'tempo' : {
+      'min': 50.0,
+      'max' : 200.0
+    }
+  };
+
+
+  Widget _loadingBar = new Container(
+              height: 20.0,
+              child: new Center(child: new LinearProgressIndicator()),
+            );
+
 
 
   @override
@@ -36,19 +80,17 @@ class _PlaylistFormState extends State<PlaylistForm>{
     setData();
     super.didChangeDependencies();
   }
->>>>>>> Stashed changes
+
 
   Future<dynamic> getSeeds() async {
     String token = await LoginHelper.getAuthToken();
     String userID = await LoginHelper.getLoggedInUser();
     
-    dynamic response = await http.get("${DotEnv().env['P42_API']}/intersection?user_id=$userID&friend_id=${widget.friendID}", headers: {'authorization': token});
+    dynamic response = await http.get("${DotEnv().env['P42_API']}/intersection?user_id=$userID&friend_id=${widget.userID}", headers: {'authorization': token});
     return json.decode(response.body);
   }
 
-<<<<<<< Updated upstream
-  
-=======
+
   Future<dynamic> getGenres({userID}) async {
     String token = await LoginHelper.getAuthToken();
     String id=  userID ?? await LoginHelper.getLoggedInUser(); 
@@ -78,8 +120,28 @@ class _PlaylistFormState extends State<PlaylistForm>{
       _errorDialog();
     }
   }
->>>>>>> Stashed changes
 
+
+  Future<void> _errorDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Could not generate playlist'),
+        content:Text('There was a problem creating your playlist. Please try again later'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Dismiss'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+  }
 
   void setData() async {
     dynamic seeds = await getSeeds();
@@ -92,23 +154,62 @@ class _PlaylistFormState extends State<PlaylistForm>{
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    setData();
-    super.didChangeDependencies();
+  Widget rangeSliderDisplayBuilder(feature, description, min, max) {
+    return(
+      Column(
+        children: <Widget>[
+          Padding(
+                  child:Text(description), 
+                  padding: EdgeInsets.all(20)), 
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center ,
+                  children: <Widget>[
+                    Text("min: ${_features[feature]['min'].toStringAsFixed(2)}"),
+                    SizedBox(width:10),
+                    Text("max: ${_features[feature]['max'].toStringAsFixed(2)}"),
+                  ],
+                ), 
+                RangeSlider(
+                  min: min,
+                  max:  max,
+                  values: RangeValues(_features[feature]['min'], _features[feature]['max']),
+                  onChanged: (RangeValues values) {
+                      setState(() {
+                        _features[feature]['min'] = values.start;
+                        _features[feature]['max'] = values.end;
+                      });
+                    },
+                ),
+                SizedBox(height:20),
+        ]
+      )
+    );
+  }
+
+  void updateSelectedArtists(list){
+    setState(() {
+       _selectedArtists = list;
+    });
   }
 
 
-<<<<<<< Updated upstream
-  Widget _loadingBar = new Container(
-              height: 20.0,
-              child: new Center(child: new LinearProgressIndicator()),
-            );
-=======
+
+  void updateSelectedSongs(list){
+    setState(() {
+       _selectedSongs = list;
+    });
+  }
+
+  void updateSelectedGenres(list){
+    setState(() {
+       _selectedGenres = list;
+    });
+  }
+
   Widget buildMultiSelectLayout(title, fieldName, callback ) {
     return(
       Column(children: <Widget>[
-      SizedBox(height: 20),
+        SizedBox(height: 20),
       Text(title,
       style: TextStyle(fontSize: 15)),
       (_seeds['common_$fieldName'].length == 0) ?
@@ -127,7 +228,6 @@ class _PlaylistFormState extends State<PlaylistForm>{
       ],)
     );
   }
->>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
@@ -140,66 +240,6 @@ class _PlaylistFormState extends State<PlaylistForm>{
         Column(
           mainAxisSize: MainAxisSize.min,
           children:<Widget>[
-<<<<<<< Updated upstream
-            SizedBox(height: 20),
-            Container(
-              child:Text("Select up to 5 seeds from songs, artists, and genres that you and ${widget.name} have in common.",
-              style: TextStyle(fontSize: 20)),
-              width:300
-            ),
-            Flex(
-              direction: Axis.vertical,
-              children:<Widget>[
-                SizedBox(height: 20),
-                Text("Common Songs",
-                style: TextStyle(fontSize: 20)),
-                (_seeds['common_songs'].length == 0) ?
-                Padding(child:Text("No common songs... yet! :D",
-                style: TextStyle(fontSize: 15)),
-                padding: EdgeInsets.only(top:30, bottom:30),
-                ) :
-                Container(child:MultiSelect( _seeds['common_songs'],
-                (_selectedSongs.length + _selectedArtists.length + _selectedGenres.length),
-                onSelectionChanged: (selectedList) {
-                  setState(() {
-                        _selectedSongs = selectedList;
-                  });
-    },), width:300),
-                Text("Common Artists",
-                style: TextStyle(fontSize: 20)),
-                (_seeds['common_artists'].length == 0) ?
-                Padding(child:Text("No common artists, yet!",
-                style: TextStyle(fontSize: 20)),
-                padding: EdgeInsets.only(top:30, bottom:30),
-                ) :
-                Container(child:MultiSelect( _seeds['common_artists'],
-                (_selectedSongs.length + _selectedArtists.length + _selectedGenres.length),
-                onSelectionChanged: (selectedList) {
-                  setState(() {
-                        _selectedArtists = selectedList;
-                  });
-                }), width:300),
-                Text("Common Genres",
-                style: TextStyle(fontSize: 20)),
-                (_seeds['common_genres'].length == 0) ?
-                Padding(child:Text("No common genres, yet!",
-                style: TextStyle(fontSize: 20)),
-                padding: EdgeInsets.only(top:30, bottom:30),
-                ) :
-                Container(child:MultiSelect(_seeds['common_genres'],
-                (_selectedSongs.length + _selectedArtists.length + _selectedGenres.length),
-                onSelectionChanged: (selectedList) {
-                  setState(() {
-                        _selectedGenres = selectedList;
-                  });
-                })
-                ,  width:300),
-                SwitchListTile(
-                      title: const Text('Filter Explicit Content?'),
-                      value: _filterExplicit,
-                      onChanged: (bool val) =>
-                          setState(() => _filterExplicit = val)
-=======
             SizedBox(height: 40),
             Text("Your Musical Intersection",
               style: TextStyle(fontSize: 20)),
@@ -280,48 +320,43 @@ class _PlaylistFormState extends State<PlaylistForm>{
                     onChanged: (bool val) =>
                         setState(() => _filterExplicit = val)
               ),
-                MaterialButton(
-                  onPressed: _createPlaylist,
-                  child: Text('Make a Playlist!',
-                        style: TextStyle(fontSize: 15)
-                      ),
-                      textColor: Colors.white,
-                      color:Colors.blueAccent, 
->>>>>>> Stashed changes
-                ),
+              MaterialButton(
+                    onPressed: _createPlaylist,
+                    child: Text('Make a Playlist!',
+                          style: TextStyle(fontSize: 15)
+                        ),
+                        textColor: Colors.white,
+                        color:Colors.blueAccent, 
+                  ),
               ]
             )
          ) :
         _loadingBar
     );
   }
-
 }
 
 
 // Code for MultiSelect widget adapted from 
 // https://medium.com/@KarthikPonnam/flutter-multi-select-choicechip-244ea016b6fa
+// and https://medium.com/@KarthikPonnam/flutter-loadmore-in-listview-23820612907d 
 class MultiSelect extends StatefulWidget {
   MultiSelect(this.data, this.totalSelected, {this.onSelectionChanged});
-<<<<<<< Updated upstream
-=======
-
-  final List data;
->>>>>>> Stashed changes
-  final int totalSelected;
   final List<dynamic> data;
-  final Function(List<String>) onSelectionChanged;
-  
+  final int totalSelected;
+
   @override
   _MultiSelectState createState() => _MultiSelectState();
+
+  final Function(List<String>) onSelectionChanged;
 }
 
 class _MultiSelectState extends State<MultiSelect> {
-  
-  List<String> _selected = [];
-  List <dynamic> _displayed = [];
-  int present = 0;
   int perPage = 5;
+  int present = 0;
+
+  List <dynamic> _displayed = [];
+  List<String> _selected = [];
 
   @override
   void initState() {
@@ -363,7 +398,7 @@ class _MultiSelectState extends State<MultiSelect> {
     List<Widget> choices = List();
     _displayed.forEach((item) {
       String name = (item is String) ? item : item['name'];
-      String id = (item is String) ? item : item['name'];
+      String id = (item is String) ? item : item['id'];
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
         child: ChoiceChip(
@@ -375,7 +410,7 @@ class _MultiSelectState extends State<MultiSelect> {
               _selected.remove(id);
               });
               widget.onSelectionChanged(_selected);
-            } else if (widget.totalSelected >=5) {
+            } else if (widget.totalSelected >= 5) {
                 _seedLimitDialog();
               } else {
               setState(() {
@@ -409,7 +444,8 @@ class _MultiSelectState extends State<MultiSelect> {
     
     return choices;
   }
-   @override
+
+  @override
   Widget build(BuildContext context) {
     return Wrap(
       children: _buildChoiceList(),
