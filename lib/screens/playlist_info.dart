@@ -170,7 +170,7 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
             SizedBox(height:20),
             ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: 300
+                maxHeight: 220
               ),
               
               child:Flex(
