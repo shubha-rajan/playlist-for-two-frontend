@@ -130,7 +130,8 @@ class _HomePageState extends State<HomePage> {
             title: Text(data[index]['description']['name']),
             trailing: Icon(Icons.arrow_forward),
             onTap:(){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index])));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index]))
+              ).whenComplete(setData);
             }
           );
         },

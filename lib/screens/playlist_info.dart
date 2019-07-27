@@ -59,11 +59,29 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
 
   Future<String> getFriendID() async {
     String selfID = await LoginHelper.getLoggedInUser();
-    List<String> playlistOwners = widget.playlist.owners;
+    List<dynamic> playlistOwners = widget.playlist['owners'];
     String friendID = playlistOwners.firstWhere((item){
       return (item != selfID);
     });
     return friendID;
+  }
+
+  void _changePlaylistDetails() async {
+    String token = await LoginHelper.getAuthToken();
+    String friendID = await getFriendID();
+
+    dynamic payload = {
+      'description': _newDescription,
+      'name':_newTitle,
+      'friend_id':friendID,
+      'playlist_uri': widget.playlist['uri']
+    };
+    dynamic response = await http.post("${DotEnv().env['P42_API']}/edit-playlist",
+    headers:{'authorization': token}, body: payload);
+    if (response.statusCode != 200) {
+      _errorDialog('An error occured', 'There was a problem updating your playlist details. Please try again');
+    }
+
   }
 
   void _updateDescription(){
@@ -72,7 +90,7 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     });
   }
 
-    void _updateTitle(){
+  void _updateTitle(){
     setState((){
       _newTitle = titleController.text;
     });
@@ -109,6 +127,27 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
       _title = _newTitle;
       _description = _newDescription;
     });
+  }
+
+  Future<void> _errorDialog(String titleText, String contentText) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(titleText),
+        content:Text(contentText),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Dismiss'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
   }
 
   Future<void> _editDialog() async {
@@ -182,6 +221,7 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
             child: Text('Save'),
             onPressed: () {
               _updateTitleDescription();
+              _changePlaylistDetails();
               Navigator.of(context).pop();
             },
           ),

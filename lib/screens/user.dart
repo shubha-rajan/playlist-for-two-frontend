@@ -49,7 +49,7 @@ class _UserPageState extends State<UserPage> {
     MaterialPageRoute(
       builder: (context) => UserPage(userID: userID, name:name)
     )
-  );
+  ).whenComplete(setData);
   }
 
   Future<void> _createPlaylist() async{
@@ -197,7 +197,7 @@ class _UserPageState extends State<UserPage> {
 
   _customPlaylistForm(){
     Navigator.push(context, 
-    MaterialPageRoute(builder:(context) => PlaylistForm(userID: widget.userID, name:widget.name)));
+    MaterialPageRoute(builder:(context) => PlaylistForm(userID: widget.userID, name:widget.name))).whenComplete(setData);
   }
 
   void setFriends() async{
@@ -384,7 +384,8 @@ class _UserPageState extends State<UserPage> {
             title: Text(data[index]['description']['name']),
             trailing: Icon(Icons.arrow_forward),
             onTap:(){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index])));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index]))
+              ).whenComplete(setData);
             }
           );
         },
@@ -397,7 +398,8 @@ class _UserPageState extends State<UserPage> {
     String imageURL = await LoginHelper.getUserPhoto();
     String authToken = await LoginHelper.getAuthToken();
     if (friendID == selfID){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:name, imageUrl: imageURL, userID: selfID, authToken: authToken,)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:name, imageUrl: imageURL, userID: selfID, authToken: authToken,))
+        ).whenComplete(setData);
       } else {
         _viewUser(friendID, friendName);
     }
