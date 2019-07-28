@@ -82,13 +82,15 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     }
   }
 
-  void deletePlaylist() async {
+  void _deletePlaylist() async {
     String token = await LoginHelper.getAuthToken();
     dynamic response = await http.post("${DotEnv().env['P42_API']}/delete-playlist",
         headers: {'authorization': token}, body: {'playlist_uri': widget.playlist['uri']});
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+    } else {
       errorDialog(context, 'An error occured',
-          'There was a problem updating your playlist details. Please try again');
+          'There was a problem deleting your playlist. Please try again');
     }
   }
 
@@ -165,6 +167,7 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
             FlatButton(
               child: Text('Delete'),
               onPressed: () {
+                _deletePlaylist();
                 Navigator.of(context).pop();
               },
             ),
