@@ -58,7 +58,13 @@ class _PlaylistFormState extends State<PlaylistForm> {
     dynamic response = await http.get(
         "${DotEnv().env['P42_API']}/intersection?user_id=$userID&friend_id=${widget.userID}",
         headers: {'authorization': token});
-    return json.decode(response.body);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
+      return _seeds;
+    }
   }
 
   Future<dynamic> getGenres({userID}) async {
@@ -66,7 +72,13 @@ class _PlaylistFormState extends State<PlaylistForm> {
     String id = userID ?? await LoginHelper.getLoggedInUser();
     var response = await http
         .get("${DotEnv().env['P42_API']}/genres?user_id=$id", headers: {'authorization': token});
-    return json.decode(response.body);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
+      return [];
+    }
   }
 
   Future<void> _createPlaylist() async {

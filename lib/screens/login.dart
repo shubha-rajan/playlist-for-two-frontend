@@ -25,11 +25,11 @@ class _LoginPageState extends State<LoginPage> {
 
   initState() {
     super.initState();
-    AuthHelper.initUriListener(stateKey);
+    AuthHelper.initUriListener(stateKey, context);
   }
 
   _loginPressed() {
-    AuthHelper.launchSpotifyLogin(stateKey);
+    AuthHelper.launchSpotifyLogin(stateKey, context);
   }
 
   @override

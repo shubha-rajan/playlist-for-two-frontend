@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/user.dart';
+import 'package:playlist_for_two/components/error_dialog.dart';
 
 class SearchPage extends StatefulWidget {
   SearchPage({Key key}) : super(key: key);
@@ -20,6 +21,13 @@ class _SearchPageState extends State<SearchPage> {
   dynamic _users = [];
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    searchController.addListener(_updateSearchTerm);
+    setUsers();
+  }
+
+  @override
   void dispose() {
     searchController.dispose();
     super.dispose();
@@ -28,13 +36,6 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    searchController.addListener(_updateSearchTerm);
-    setUsers();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     searchController.addListener(_updateSearchTerm);
     setUsers();
   }
@@ -64,8 +65,13 @@ class _SearchPageState extends State<SearchPage> {
     String token = await LoginHelper.getAuthToken();
     var response =
         await http.get("${DotEnv().env['P42_API']}/users", headers: {"authorization": token});
-
-    return json.decode(response.body);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
+      return _users;
+    }
   }
 
   void setUsers() async {

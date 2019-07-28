@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/search_users.dart';
 import 'package:playlist_for_two/screens/user.dart';
+import 'package:playlist_for_two/components/error_dialog.dart';
 
 class FriendsPage extends StatefulWidget {
   FriendsPage({Key key}) : super(key: key);
@@ -49,6 +50,8 @@ class _FriendsPageState extends State<FriendsPage> {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
       return _friends;
     }
   }

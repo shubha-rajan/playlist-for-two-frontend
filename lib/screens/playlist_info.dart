@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:playlist_for_two/components/error_dialog.dart';
 
 class PlaylistInfo extends StatefulWidget {
   PlaylistInfo({Key key, this.playlist}) : super(key: key);
+
   final dynamic playlist;
 
   @override
@@ -107,6 +109,9 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
         headers: {'authorization': token});
     if (response.statusCode == 200) {
       return json.decode(response.body);
+    } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
     }
   }
 
@@ -209,7 +214,8 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url }';
+      errorDialog(
+          context, 'An error occurred', 'Unable to launch Spotify app or browser on this device');
     }
   }
 
@@ -218,7 +224,8 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url ';
+      errorDialog(
+          context, 'An error occurred', 'Unable to launch Spotify app or browser on this device');
     }
   }
 

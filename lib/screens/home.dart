@@ -5,10 +5,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:playlist_for_two/screens/list.dart';
 import 'package:playlist_for_two/screens/user.dart';
+
 import 'package:playlist_for_two/components/drawer_list_view.dart';
 import 'package:playlist_for_two/components/friend_list_view.dart';
 import 'package:playlist_for_two/components/playlist_view.dart';
 import 'package:playlist_for_two/components/user_card.dart';
+import 'package:playlist_for_two/components/error_dialog.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.name, this.imageUrl, this.authToken, this.userID}) : super(key: key);
@@ -54,6 +56,8 @@ class _HomePageState extends State<HomePage> {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
       return _friends;
     }
   }
@@ -68,6 +72,8 @@ class _HomePageState extends State<HomePage> {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
       return _playlists;
     }
   }

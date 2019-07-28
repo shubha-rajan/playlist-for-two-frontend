@@ -74,7 +74,13 @@ class _UserPageState extends State<UserPage> {
     var response = await http.get("${DotEnv().env['P42_API']}/friends?user_id=${widget.userID}",
         headers: {'authorization': authToken});
 
-    return json.decode(response.body);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
+      return _friends;
+    }
   }
 
   Future<List> getPlaylists() async {
@@ -83,7 +89,13 @@ class _UserPageState extends State<UserPage> {
     dynamic response = await http.get(
         "${DotEnv().env['P42_API']}/playlists?user_id=$selfID&friend_id=${widget.userID}",
         headers: {'authorization': authToken});
-    return json.decode(response.body);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
+      return _playlists;
+    }
   }
 
   Future<void> _removeFriend() async {
