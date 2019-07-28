@@ -38,7 +38,7 @@ class _UserPageState extends State<UserPage> {
   @override
   void didChangeDependencies() {
     setData();
-    setFriends();
+
     super.didChangeDependencies();
   }
 
@@ -66,6 +66,19 @@ class _UserPageState extends State<UserPage> {
     } else {
       errorDialog(context, 'Could not generate playlist',
           'There was a problem creating your grab bag playlist. This can occur if either you or ${widget.name} have a limited listening history or if you do not have any common songs, artists, or genres. Try making a custom playlist to discover new music together and then try again!');
+    }
+  }
+
+  Future<String> getImageURL() async {
+    String authToken = await LoginHelper.getAuthToken();
+    var response = await http.get("${DotEnv().env['P42_API']}/user?user_id=${widget.userID}",
+        headers: {'authorization': authToken});
+    if (response.statusCode == 200) {
+      dynamic imageLinks = json.decode(response.body)['image_links'];
+      String url = (imageLinks.length > 0) ? imageLinks[0]['url'] : _imageUrl;
+      return url;
+    } else {
+      return _imageUrl;
     }
   }
 
@@ -148,8 +161,11 @@ class _UserPageState extends State<UserPage> {
 
   void setData() async {
     dynamic playlists = await getPlaylists();
+    String imageUrl = await getImageURL();
+    setFriends();
     setState(() {
       _playlists = playlists;
+      _imageUrl = imageUrl;
     });
   }
 
