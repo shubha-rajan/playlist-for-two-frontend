@@ -82,6 +82,16 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     }
   }
 
+  void deletePlaylist() async {
+    String token = await LoginHelper.getAuthToken();
+    dynamic response = await http.post("${DotEnv().env['P42_API']}/delete-playlist",
+        headers: {'authorization': token}, body: {'playlist_uri': widget.playlist['uri']});
+    if (response.statusCode != 200) {
+      errorDialog(context, 'An error occured',
+          'There was a problem updating your playlist details. Please try again');
+    }
+  }
+
   void _updateDescription() {
     setState(() {
       _newDescription = descriptionController.text;
@@ -128,6 +138,40 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
       _title = _newTitle;
       _description = _newDescription;
     });
+  }
+
+  Future<void> _deleteDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete this playlist?"),
+          content: Container(
+              child: Flex(direction: Axis.vertical, children: <Widget>[
+                Text("Are you sure you want to delete this playlist? This is a permanent action."),
+                SizedBox(height: 15),
+                Text(
+                    "Deleting this playlist will remove it from your profile. If you have followed the playlist on Spotify, deleting will not unfollow the playlist. Deleting this playlist on your profile will not remove it from your friend's profile"),
+              ]),
+              height: 200),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _editDialog() async {
@@ -249,12 +293,17 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
                     SizedBox(height: 40),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                       MaterialButton(
-                        child: Text('Edit Playlist Details'),
+                        child: Icon(Icons.delete),
+                        onPressed: _deleteDialog,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                      ),
+                      MaterialButton(
+                        child: Icon(Icons.edit),
                         onPressed: _editDialog,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                       ),
                       MaterialButton(
-                        child: Text('Open in Spotify'),
+                        child: Image.asset('graphics/Spotify_Icon_RGB_Black.png', height: 30),
                         onPressed: _openPlaylistInSpotify,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                         textColor: Colors.white,
