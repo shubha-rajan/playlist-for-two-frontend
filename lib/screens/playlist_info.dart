@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:playlist_for_two/components/error_dialog.dart';
 
 class PlaylistInfo extends StatefulWidget {
   PlaylistInfo({Key key, this.playlist}) : super(key: key);
+
   final dynamic playlist;
 
   @override
@@ -14,21 +16,20 @@ class PlaylistInfo extends StatefulWidget {
 }
 
 class _PlaylistInfoState extends State<PlaylistInfo> {
-  @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
-
-  dynamic _tracks = [];
-  String _title;
-  String _description;
-  String _newTitle;
-  String _newDescription;
-
-  TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+
+  String _description;
+  String _newDescription;
+  String _newTitle;
+  String _title;
+  dynamic _tracks = [];
+
+  @override
+  void didChangeDependencies() {
+    _setTracks();
+    super.didChangeDependencies();
+  }
 
   @override
   void dispose() {
@@ -45,6 +46,40 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     titleController.text = widget.playlist['description']['name'];
     descriptionController.text = widget.playlist['description']['description'];
     super.initState();
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  Future<String> getFriendID() async {
+    String selfID = await LoginHelper.getLoggedInUser();
+    List<dynamic> playlistOwners = widget.playlist['owners'];
+    String friendID = playlistOwners.firstWhere((item) {
+      return (item != selfID);
+    });
+    return friendID;
+  }
+
+  void _changePlaylistDetails() async {
+    String token = await LoginHelper.getAuthToken();
+    String friendID = await getFriendID();
+
+    dynamic payload = {
+      'description': _newDescription,
+      'name': _newTitle,
+      'friend_id': friendID,
+      'playlist_uri': widget.playlist['uri']
+    };
+    dynamic response = await http.post("${DotEnv().env['P42_API']}/edit-playlist",
+        headers: {'authorization': token}, body: payload);
+    if (response.statusCode != 200) {
+      errorDialog(context, 'An error occured',
+          'There was a problem updating your playlist details. Please try again');
+    }
   }
 
   void _updateDescription() {
@@ -74,6 +109,10 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
         headers: {'authorization': token});
     if (response.statusCode == 200) {
       return json.decode(response.body);
+    } else {
+      errorDialog(context, 'An error occurred',
+          'There was a problem retrieving data from our servers. Check your network connection or try again later.');
+      return _tracks;
     }
   }
 
@@ -101,40 +140,37 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
             content: Container(
                 height: 400,
                 child: Column(children: <Widget>[
-                  Flex(mainAxisSize: MainAxisSize.min, direction: Axis.vertical, children: <Widget>[
-                    Flexible(
-                        fit: FlexFit.loose,
-                        child: TextField(
-                            controller: titleController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blueGrey, width: 1))))),
-                  ]),
+                  TextField(
+                    controller: titleController,
+                  ),
                   SizedBox(height: 20),
-                  Flex(
-                    mainAxisSize: MainAxisSize.min,
-                    direction: Axis.vertical,
-                    children: <Widget>[
-                      Flexible(
-                          fit: FlexFit.loose,
-                          child: TextField(
-                            controller: descriptionController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.blueGrey, width: 1)),
-                            ),
-                          ))
-                    ],
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: 220),
+                    child: Flex(
+                        mainAxisSize: MainAxisSize.min,
+                        direction: Axis.vertical,
+                        children: <Widget>[
+                          Flexible(
+                              fit: FlexFit.loose,
+                              child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  reverse: true,
+                                  child: TextField(
+                                    controller: descriptionController,
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: null,
+                                  ))),
+                        ]),
                   )
                 ])),
             actions: <Widget>[
               FlatButton(
                 child: Text('Cancel'),
                 onPressed: () {
+                  setState(() {
+                    _newTitle = _title;
+                    _newDescription = _description;
+                  });
                   Navigator.of(context).pop();
                 },
               ),
@@ -142,18 +178,13 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
                 child: Text('Save'),
                 onPressed: () {
                   _updateTitleDescription();
+                  _changePlaylistDetails();
                   Navigator.of(context).pop();
                 },
               ),
             ],
           );
         });
-  }
-
-  @override
-  void didChangeDependencies() {
-    _setTracks();
-    super.didChangeDependencies();
   }
 
   void _openPlaylistInSpotify() async {
@@ -163,7 +194,8 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url }';
+      errorDialog(
+          context, 'An error occurred', 'Unable to launch Spotify app or browser on this device');
     }
   }
 
@@ -172,8 +204,28 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url ';
+      errorDialog(
+          context, 'An error occurred', 'Unable to launch Spotify app or browser on this device');
     }
+  }
+
+  Widget _playlistTrackView(BuildContext context, List data) {
+    return ListView.separated(
+      separatorBuilder: (context, index) => Divider(
+        color: Colors.blueGrey,
+      ),
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text("${data[index]['name']} - ${data[index]['artists'][0]}"),
+          onTap: () {
+            _openTrackInSpotify(data[index]['id']);
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -240,24 +292,5 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
                         ],
                       )))
             ])));
-  }
-
-  Widget _playlistTrackView(BuildContext context, List data) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-        color: Colors.blueGrey,
-      ),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text("${data[index]['name']} - ${data[index]['artists'][0]}"),
-          onTap: () {
-            _openTrackInSpotify(data[index]['id']);
-          },
-        );
-      },
-    );
   }
 }
