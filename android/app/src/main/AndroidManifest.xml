@@ -8,7 +8,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="playlist_for_two_frontend"
+        android:label="Playlist for Two"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
