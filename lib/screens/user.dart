@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/playlist_info.dart';
 import 'package:playlist_for_two/screens/form.dart';
 import 'package:playlist_for_two/screens/home.dart';
+import 'package:playlist_for_two/components/user_card.dart';
 
 class UserPage extends StatefulWidget {
   UserPage({Key key, this.name, this.userID}) : super(key: key);
+
   final String name;
   final String userID;
 
@@ -18,12 +20,17 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
+  bool _filterExplicit = false;
+  String _friendStatus = 'pending';
+  String _imageUrl = "http://placekitten.com/300/300";
+  dynamic _friends = {'accepted': [], 'requested': [], 'incoming': []};
+
+  Widget _loadingBar = new Container(
+    height: 20.0,
+    child: new Center(child: new LinearProgressIndicator()),
+  );
+
+  dynamic _playlists = [];
 
   @override
   void didChangeDependencies() {
@@ -32,11 +39,12 @@ class _UserPageState extends State<UserPage> {
     super.didChangeDependencies();
   }
 
-  dynamic _playlists = [];
-  bool _filterExplicit = false;
-  String _friendStatus = 'pending';
-  String _imageUrl = "http://placekitten.com/300/300";
-  dynamic _friends = {'accepted': [], 'requested': [], 'incoming': []};
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   void _viewUser(userID, name) {
     Navigator.push(
@@ -229,47 +237,65 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
-  Widget _userCard() {
-    return (Row(children: <Widget>[
-      Container(
-          height: 100,
-          width: 100,
-          child: ClipRRect(
-              borderRadius: new BorderRadius.circular(50.0),
-              child: CachedNetworkImage(
-                imageUrl: _imageUrl,
-                placeholder: (context, url) => new CircularProgressIndicator(),
-                errorWidget: (context, url, error) => new Icon(Icons.error),
-              ))),
-      Padding(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('${widget.name}',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center),
-              SizedBox(height: 10),
-              Row(children: <Widget>[
-                Padding(
-                    child: Text('${_friends['accepted'].length} friends'),
-                    padding: EdgeInsets.only(right: 5)),
-                Padding(
-                    child: Text('${_playlists.length} Playlists'),
-                    padding: EdgeInsets.only(left: 5)),
-              ]),
-              SizedBox(height: 10),
-              _actionButton(context, _friendStatus, _requestFriend, _acceptFriend, _removeFriend),
-            ]),
-        padding: EdgeInsets.only(left: 30),
-      )
-    ]));
+  Widget _playlistListView(BuildContext context, List data) {
+    return ListView.separated(
+      separatorBuilder: (context, index) => Divider(
+        color: Colors.blueGrey,
+      ),
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+            title: Text(data[index]['description']['name']),
+            onTap: () {
+              Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index])))
+                  .whenComplete(setData);
+            });
+      },
+    );
   }
 
-  Widget _loadingBar = new Container(
-    height: 20.0,
-    child: new Center(child: new LinearProgressIndicator()),
-  );
+  Future<void> _friendTapCallback(friendID, friendName) async {
+    String name = await LoginHelper.getUserName();
+    String selfID = await LoginHelper.getLoggedInUser();
+    String imageURL = await LoginHelper.getUserPhoto();
+    String authToken = await LoginHelper.getAuthToken();
+    if (friendID == selfID) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(
+                    name: name,
+                    imageUrl: imageURL,
+                    userID: selfID,
+                    authToken: authToken,
+                  ))).whenComplete(setData);
+    } else {
+      _viewUser(friendID, friendName);
+    }
+  }
+
+  Widget _friendListView(BuildContext context, List data) {
+    return ListView.separated(
+      separatorBuilder: (context, index) => Divider(
+        color: Colors.blueGrey,
+      ),
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(json.decode(data[index])['name']),
+          onTap: () {
+            _friendTapCallback(
+                json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +305,15 @@ class _UserPageState extends State<UserPage> {
         ),
         body: Center(
             child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Padding(child: _userCard(), padding: EdgeInsets.all(30)),
+          Padding(
+              child: userCard(
+                  _imageUrl,
+                  widget.name,
+                  _friends['accepted'].length,
+                  _playlists.length,
+                  _actionButton(
+                      context, _friendStatus, _requestFriend, _acceptFriend, _removeFriend)),
+              padding: EdgeInsets.all(30)),
           (_friendStatus == 'accepted')
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -345,66 +379,6 @@ class _UserPageState extends State<UserPage> {
                     ],
                   )))
         ])));
-  }
-
-  Widget _playlistListView(BuildContext context, List data) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-        color: Colors.blueGrey,
-      ),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-            title: Text(data[index]['description']['name']),
-            onTap: () {
-              Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index])))
-                  .whenComplete(setData);
-            });
-      },
-    );
-  }
-
-  Future<void> _friendTapCallback(friendID, friendName) async {
-    String name = await LoginHelper.getUserName();
-    String selfID = await LoginHelper.getLoggedInUser();
-    String imageURL = await LoginHelper.getUserPhoto();
-    String authToken = await LoginHelper.getAuthToken();
-    if (friendID == selfID) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomePage(
-                    name: name,
-                    imageUrl: imageURL,
-                    userID: selfID,
-                    authToken: authToken,
-                  ))).whenComplete(setData);
-    } else {
-      _viewUser(friendID, friendName);
-    }
-  }
-
-  Widget _friendListView(BuildContext context, List data) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-        color: Colors.blueGrey,
-      ),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(json.decode(data[index])['name']),
-          onTap: () {
-            _friendTapCallback(
-                json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
-          },
-        );
-      },
-    );
   }
 }
 

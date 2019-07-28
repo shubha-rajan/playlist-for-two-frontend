@@ -2,14 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/list.dart';
-import 'package:playlist_for_two/screens/friends.dart';
 import 'package:playlist_for_two/screens/user.dart';
-import 'package:playlist_for_two/screens/search_users.dart';
 import 'package:playlist_for_two/screens/playlist_info.dart';
+import 'package:playlist_for_two/components/drawer_list_view.dart';
+import 'package:playlist_for_two/components/user_card.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.name, this.imageUrl, this.authToken, this.userID}) : super(key: key);
@@ -131,48 +129,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _userCard() {
-    return (Row(children: <Widget>[
-      Container(
-          height: 100,
-          width: 100,
-          child: ClipRRect(
-              borderRadius: new BorderRadius.circular(50.0),
-              child: CachedNetworkImage(
-                imageUrl: widget.imageUrl,
-                placeholder: (context, url) => new CircularProgressIndicator(),
-                errorWidget: (context, url, error) => new Icon(Icons.error),
-              ))),
-      Padding(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('${widget.name}',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center),
-              SizedBox(height: 10),
-              Row(children: <Widget>[
-                Padding(
-                    child: Text('${_friends['accepted'].length} friends'),
-                    padding: EdgeInsets.only(right: 5)),
-                Padding(
-                    child: Text('${_playlists.length} Playlists'),
-                    padding: EdgeInsets.only(left: 5)),
-              ]),
-              SizedBox(height: 10),
-              MaterialButton(
-                onPressed: _getUserSongs,
-                child: Text('My Top Music', style: TextStyle(fontSize: 15)),
-                textColor: Colors.white,
-                color: Colors.blueAccent,
-              ),
-            ]),
-        padding: EdgeInsets.only(left: 30),
-      )
-    ]));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,7 +142,17 @@ class _HomePageState extends State<HomePage> {
         body: Center(
             child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Padding(
-            child: _userCard(),
+            child: userCard(
+                widget.imageUrl,
+                widget.name,
+                _friends['accepted'].length,
+                _playlists.length,
+                MaterialButton(
+                  onPressed: _getUserSongs,
+                  child: Text('My Top Music', style: TextStyle(fontSize: 15)),
+                  textColor: Colors.white,
+                  color: Colors.blueAccent,
+                )),
             padding: EdgeInsets.all(30),
           ),
           Expanded(
@@ -214,62 +180,5 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ))),
         ])));
-  }
-}
-
-class DrawerListView extends StatefulWidget {
-  DrawerListView({Key key, this.refreshCallback}) : super(key: key);
-  final Function refreshCallback;
-  @override
-  _DrawerListViewState createState() => _DrawerListViewState();
-}
-
-class _DrawerListViewState extends State<DrawerListView> {
-  @override
-  Widget build(BuildContext context) {
-    void _logOutUser() {
-      LoginHelper.clearLoggedInUser();
-      Navigator.pushReplacementNamed(context, '/login');
-    }
-
-    void _getFriendRequests() async {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => FriendsPage()))
-          .whenComplete(widget.refreshCallback);
-    }
-
-    void _findFriends() {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage()))
-          .whenComplete(widget.refreshCallback);
-    }
-
-    return ListView(
-      children: <Widget>[
-        Container(
-          child: Image.asset('graphics/logo-white.png'),
-          padding: EdgeInsets.all(50),
-        ),
-        ListTile(
-          leading: Icon(Icons.search),
-          title: Text('Find Friends'),
-          onTap: () {
-            _findFriends();
-          },
-        ),
-        ListTile(
-          leading: Icon(Icons.person_add),
-          title: Text('View Friend Requests'),
-          onTap: () {
-            _getFriendRequests();
-          },
-        ),
-        ListTile(
-          leading: Icon(Icons.exit_to_app),
-          title: Text('Log Out'),
-          onTap: () {
-            _logOutUser();
-          },
-        )
-      ],
-    );
   }
 }

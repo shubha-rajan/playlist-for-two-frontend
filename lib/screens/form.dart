@@ -16,17 +16,6 @@ class PlaylistForm extends StatefulWidget {
 }
 
 class _PlaylistFormState extends State<PlaylistForm> {
-  dynamic _seeds;
-
-  List<String> _selectedArtists = [];
-  List<String> _selectedGenres = [];
-  List<String> _selectedSongs = [];
-  bool _filterExplicit = false;
-  dynamic _selfGenres = [];
-  dynamic _userGenres = [];
-  List<String> _selectedSelfGenres = [];
-  List<String> _selectedUserGenres = [];
-
   Map<String, Map> _features = {
     'valence': {'min': 0.0, 'max': 1.0},
     'danceability': {'min': 0.0, 'max': 1.0},
@@ -39,10 +28,20 @@ class _PlaylistFormState extends State<PlaylistForm> {
     'tempo': {'min': 50.0, 'max': 200.0}
   };
 
+  bool _filterExplicit = false;
   Widget _loadingBar = new Container(
     height: 20.0,
     child: new Center(child: new LinearProgressIndicator()),
   );
+
+  dynamic _seeds;
+  List<String> _selectedArtists = [];
+  List<String> _selectedGenres = [];
+  List<String> _selectedSelfGenres = [];
+  List<String> _selectedSongs = [];
+  List<String> _selectedUserGenres = [];
+  dynamic _selfGenres = [];
+  dynamic _userGenres = [];
 
   @override
   void didChangeDependencies() {
@@ -329,6 +328,7 @@ class _PlaylistFormState extends State<PlaylistForm> {
 // and https://medium.com/@KarthikPonnam/flutter-loadmore-in-listview-23820612907d
 class MultiSelect extends StatefulWidget {
   MultiSelect(this.data, this.totalSelected, {this.onSelectionChanged});
+
   final List<dynamic> data;
   final int totalSelected;
 
