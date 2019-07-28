@@ -4,10 +4,13 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
-import 'package:playlist_for_two/screens/playlist_info.dart';
 import 'package:playlist_for_two/screens/form.dart';
 import 'package:playlist_for_two/screens/home.dart';
 import 'package:playlist_for_two/components/user_card.dart';
+import 'package:playlist_for_two/components/error_dialog.dart';
+import 'package:playlist_for_two/components/playlist_view.dart';
+import 'package:playlist_for_two/components/friend_list_view.dart';
+import 'package:playlist_for_two/components/action_button.dart';
 
 class UserPage extends StatefulWidget {
   UserPage({Key key, this.name, this.userID}) : super(key: key);
@@ -61,7 +64,7 @@ class _UserPageState extends State<UserPage> {
     if (response.statusCode == 200) {
       setData();
     } else {
-      _errorDialog('Could not generate playlist',
+      errorDialog(context, 'Could not generate playlist',
           'There was a problem creating your grab bag playlist. This can occur if either you or ${widget.name} have a limited listening history or if you do not have any common songs, artists, or genres. Try making a custom playlist to discover new music together and then try again!');
     }
   }
@@ -94,7 +97,7 @@ class _UserPageState extends State<UserPage> {
         _friendStatus = 'none';
       });
     } else {
-      _errorDialog('An error occured', 'Could not remove friend. Please try again!');
+      errorDialog(context, 'An error occured', 'Could not remove friend. Please try again!');
     }
   }
 
@@ -136,27 +139,6 @@ class _UserPageState extends State<UserPage> {
     setState(() {
       _playlists = playlists;
     });
-  }
-
-  Future<void> _errorDialog(String titleText, String contentText) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(titleText),
-          content: Text(contentText),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Dismiss'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<void> _grabBagPlaylistDialog() async {
@@ -237,26 +219,6 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
-  Widget _playlistListView(BuildContext context, List data) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-        color: Colors.blueGrey,
-      ),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-            title: Text(data[index]['description']['name']),
-            onTap: () {
-              Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index])))
-                  .whenComplete(setData);
-            });
-      },
-    );
-  }
-
   Future<void> _friendTapCallback(friendID, friendName) async {
     String name = await LoginHelper.getUserName();
     String selfID = await LoginHelper.getLoggedInUser();
@@ -277,26 +239,6 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
-  Widget _friendListView(BuildContext context, List data) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-        color: Colors.blueGrey,
-      ),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(json.decode(data[index])['name']),
-          onTap: () {
-            _friendTapCallback(
-                json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
-          },
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -311,7 +253,7 @@ class _UserPageState extends State<UserPage> {
                   widget.name,
                   _friends['accepted'].length,
                   _playlists.length,
-                  _actionButton(
+                  actionButton(
                       context, _friendStatus, _requestFriend, _acceptFriend, _removeFriend)),
               padding: EdgeInsets.all(30)),
           (_friendStatus == 'accepted')
@@ -353,7 +295,7 @@ class _UserPageState extends State<UserPage> {
                             : TabBarView(
                                 children: [
                                   (_friendStatus == 'accepted')
-                                      ? _playlistListView(context, _playlists)
+                                      ? playlistListView(context, _playlists, setData)
                                       : Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
@@ -363,7 +305,8 @@ class _UserPageState extends State<UserPage> {
                                                   'Playlists are only visible to users who are friends')
                                             ]),
                                   (_friendStatus == 'accepted')
-                                      ? _friendListView(context, _friends['accepted'])
+                                      ? friendListView(
+                                          context, _friends['accepted'], _friendTapCallback)
                                       : Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
@@ -380,54 +323,4 @@ class _UserPageState extends State<UserPage> {
                   )))
         ])));
   }
-}
-
-Widget _actionButton(BuildContext context, String status, Function requestFriend,
-    Function acceptFriend, Function removeFriend) {
-  Widget button;
-  switch (status) {
-    case 'none':
-      {
-        button = MaterialButton(
-          onPressed: requestFriend,
-          child: Text('Add Friend', style: TextStyle(fontSize: 15)),
-          textColor: Colors.white,
-          color: Colors.blueAccent,
-        );
-      }
-      break;
-    case 'requested':
-      {
-        button = MaterialButton(
-          onPressed: removeFriend,
-          child: Text('Cancel Friend Request', style: TextStyle(fontSize: 15)),
-        );
-      }
-      break;
-    case 'accepted':
-      {
-        button = MaterialButton(
-          onPressed: removeFriend,
-          child: Text('Remove Friend', style: TextStyle(fontSize: 15)),
-          textColor: Colors.white,
-          color: Colors.red,
-        );
-      }
-      break;
-    case 'incoming':
-      {
-        button = MaterialButton(
-          onPressed: acceptFriend,
-          child: Text('Accept Friend Request', style: TextStyle(fontSize: 15)),
-          textColor: Colors.white,
-          color: Colors.blueAccent,
-        );
-      }
-      break;
-    default:
-      {
-        button = SizedBox();
-      }
-  }
-  return (button);
 }

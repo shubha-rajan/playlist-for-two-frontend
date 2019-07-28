@@ -5,8 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:playlist_for_two/screens/list.dart';
 import 'package:playlist_for_two/screens/user.dart';
-import 'package:playlist_for_two/screens/playlist_info.dart';
 import 'package:playlist_for_two/components/drawer_list_view.dart';
+import 'package:playlist_for_two/components/friend_list_view.dart';
+import 'package:playlist_for_two/components/playlist_view.dart';
 import 'package:playlist_for_two/components/user_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -90,45 +91,6 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => ListPage()));
   }
 
-  Widget _friendListView(BuildContext context, List data) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-        color: Colors.blueGrey,
-      ),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(json.decode(data[index])['name']),
-          onTap: () {
-            _viewUser(json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
-          },
-        );
-      },
-    );
-  }
-
-  Widget _playlistListView(BuildContext context, List data) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-        color: Colors.blueGrey,
-      ),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-            title: Text(data[index]['description']['name']),
-            onTap: () {
-              Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PlaylistInfo(playlist: data[index])))
-                  .whenComplete(setData);
-            });
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,8 +133,8 @@ class _HomePageState extends State<HomePage> {
                       Flexible(
                         child: TabBarView(
                           children: [
-                            _friendListView(context, _friends['accepted']),
-                            _playlistListView(context, _playlists)
+                            friendListView(context, _friends['accepted'], _viewUser),
+                            playlistListView(context, _playlists, setData)
                           ],
                         ),
                         fit: FlexFit.loose,

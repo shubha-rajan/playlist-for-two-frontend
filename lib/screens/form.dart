@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/user.dart';
 import 'package:playlist_for_two/components/multi_select.dart';
+import 'package:playlist_for_two/components/error_dialog.dart';
 
 class PlaylistForm extends StatefulWidget {
   PlaylistForm({Key key, this.userID, this.name}) : super(key: key);
@@ -91,29 +92,9 @@ class _PlaylistFormState extends State<PlaylistForm> {
                     userID: widget.userID,
                   )));
     } else {
-      _errorDialog();
+      errorDialog(context, 'Could not generate playlist',
+          'There was a problem creating your playlist. Please try again later');
     }
-  }
-
-  Future<void> _errorDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Could not generate playlist'),
-          content: Text('There was a problem creating your playlist. Please try again later'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Dismiss'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void setData() async {
@@ -153,19 +134,19 @@ class _PlaylistFormState extends State<PlaylistForm> {
     ]));
   }
 
-  void updateSelectedArtists(list) {
+  void _updateSelectedArtists(list) {
     setState(() {
       _selectedArtists = list;
     });
   }
 
-  void updateSelectedSongs(list) {
+  void _updateSelectedSongs(list) {
     setState(() {
       _selectedSongs = list;
     });
   }
 
-  void updateSelectedGenres(list) {
+  void _updateSelectedGenres(list) {
     setState(() {
       _selectedGenres = list;
     });
@@ -215,9 +196,9 @@ class _PlaylistFormState extends State<PlaylistForm> {
                             child: Text(
                                 "Select up to 5 seeds from songs, artists, and genres that you and ${widget.name} have in common."),
                             width: 350),
-                        buildMultiSelectLayout("Common Songs", 'songs', updateSelectedSongs),
-                        buildMultiSelectLayout("Common Artists", 'artists', updateSelectedArtists),
-                        buildMultiSelectLayout("Common Genres", 'genres', updateSelectedGenres),
+                        buildMultiSelectLayout("Common Songs", 'songs', _updateSelectedSongs),
+                        buildMultiSelectLayout("Common Artists", 'artists', _updateSelectedArtists),
+                        buildMultiSelectLayout("Common Genres", 'genres', _updateSelectedGenres),
                         SizedBox(height: 20),
                       ])
                     : Flex(direction: Axis.vertical, children: <Widget>[
