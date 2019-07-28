@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'package:playlist_for_two/screens/list.dart';
+import 'package:playlist_for_two/screens/top_music.dart';
 import 'package:playlist_for_two/screens/user.dart';
 
 import 'package:playlist_for_two/components/drawer_list_view.dart';
@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _getUserSongs() async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ListPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => TopMusicPage()));
   }
 
   @override
