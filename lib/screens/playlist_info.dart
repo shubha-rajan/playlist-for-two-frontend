@@ -156,7 +156,7 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
                 Text(
                     "Deleting this playlist will remove it from your profile. If you have followed the playlist on Spotify, deleting will not unfollow the playlist. Deleting this playlist on your profile will not remove it from your friend's profile"),
               ]),
-              height: 200),
+              height: 300),
           actions: <Widget>[
             FlatButton(
               child: Text('Cancel'),
@@ -191,24 +191,21 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
                     controller: titleController,
                   ),
                   SizedBox(height: 20),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: 220),
-                    child: Flex(
-                        mainAxisSize: MainAxisSize.min,
-                        direction: Axis.vertical,
-                        children: <Widget>[
-                          Flexible(
-                              fit: FlexFit.loose,
-                              child: SingleChildScrollView(
-                                  scrollDirection: Axis.vertical,
-                                  reverse: true,
-                                  child: TextField(
-                                    controller: descriptionController,
-                                    keyboardType: TextInputType.multiline,
-                                    maxLines: null,
-                                  ))),
-                        ]),
-                  )
+                  Flex(mainAxisSize: MainAxisSize.min, direction: Axis.vertical, children: <Widget>[
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: ConstrainedBox(
+                          constraints:
+                              BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 3),
+                          child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: TextField(
+                                controller: descriptionController,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: null,
+                              ))),
+                    )
+                  ]),
                 ])),
             actions: <Widget>[
               FlatButton(
@@ -277,72 +274,69 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text('Playlists'),
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Playlists'),
+        ),
+        body: Flex(direction: Axis.vertical, children: [
+          SizedBox(height: 20),
+          Container(
+            child: Column(
+              children: <Widget>[
+                Text(_title ?? widget.playlist['description']['title'],
+                    style: TextStyle(fontSize: 20)),
+                SizedBox(height: 10),
+                Text(_description ?? widget.playlist['description']['description'],
+                    style: TextStyle(fontSize: 15)),
+                SizedBox(height: 10),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                  MaterialButton(
+                    child: Icon(Icons.delete),
+                    onPressed: _deleteDialog,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  ),
+                  MaterialButton(
+                    child: Icon(Icons.edit),
+                    onPressed: _editDialog,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  ),
+                  MaterialButton(
+                    child: Image.asset('graphics/Spotify_Icon_RGB_Black.png', height: 30),
+                    onPressed: _openPlaylistInSpotify,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                    textColor: Colors.white,
+                    color: Colors.green,
+                  )
+                ])
+              ],
             ),
-            body: Flex(direction: Axis.vertical, children: [
-              SizedBox(height: 40),
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    Text(_title ?? widget.playlist['description']['title'],
-                        style: TextStyle(fontSize: 20)),
-                    SizedBox(height: 40),
-                    Text(_description ?? widget.playlist['description']['description'],
-                        style: TextStyle(fontSize: 15)),
-                    SizedBox(height: 40),
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                      MaterialButton(
-                        child: Icon(Icons.delete),
-                        onPressed: _deleteDialog,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            margin: EdgeInsets.only(left: 20.0, right: 20.0),
+          ),
+          Expanded(
+              child: DefaultTabController(
+                  length: 1,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Container(
+                        child: TabBar(tabs: [
+                          Tab(
+                              child: Text(
+                            "Tracks",
+                            style: TextStyle(fontSize: 20),
+                          )),
+                        ]),
                       ),
-                      MaterialButton(
-                        child: Icon(Icons.edit),
-                        onPressed: _editDialog,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                      ),
-                      MaterialButton(
-                        child: Image.asset('graphics/Spotify_Icon_RGB_Black.png', height: 30),
-                        onPressed: _openPlaylistInSpotify,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                        textColor: Colors.white,
-                        color: Colors.green,
+                      Flexible(
+                        child: TabBarView(
+                          children: [
+                            _playlistTrackView(context, _tracks),
+                          ],
+                        ),
+                        fit: FlexFit.loose,
                       )
-                    ])
-                  ],
-                ),
-                margin: EdgeInsets.only(left: 20.0, right: 20.0),
-              ),
-              Expanded(
-                  child: DefaultTabController(
-                      length: 1,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Container(
-                            child: TabBar(tabs: [
-                              Tab(
-                                  child: Text(
-                                "Tracks",
-                                style: TextStyle(fontSize: 20),
-                              )),
-                            ]),
-                            width: 400,
-                          ),
-                          Flexible(
-                            child: TabBarView(
-                              children: [
-                                _playlistTrackView(context, _tracks),
-                              ],
-                            ),
-                            fit: FlexFit.loose,
-                          )
-                        ],
-                      )))
-            ])));
+                    ],
+                  )))
+        ]));
   }
 }

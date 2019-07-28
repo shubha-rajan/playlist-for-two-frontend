@@ -13,7 +13,7 @@ class TopMusicPage extends StatefulWidget {
 }
 
 class _TopMusicPageState extends State<TopMusicPage> {
-  dynamic _genres = [];
+  dynamic _genres;
   Widget _loadingBar = new Container(
     height: 20.0,
     child: new Center(child: new LinearProgressIndicator()),
@@ -62,7 +62,7 @@ class _TopMusicPageState extends State<TopMusicPage> {
     } else {
       errorDialog(context, 'An error occurred',
           'There was a problem retrieving data from our servers. Check your network connection or try again later.');
-      return _songData;
+      return _genres;
     }
   }
 
@@ -99,25 +99,37 @@ class _TopMusicPageState extends State<TopMusicPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-            appBar: AppBar(
-                title: Text("My Top Music"),
-                bottom: TabBar(
-                  tabs: [
-                    Tab(
-                      text: "Top Songs",
-                    ),
-                    Tab(text: "Top Artists"),
-                    Tab(text: "Top Genres")
-                  ],
-                )),
-            body: Flex(
-                direction: Axis.vertical,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("My Top Music"),
+        ),
+        body: Flex(direction: Axis.vertical, children: [
+          Container(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 20),
+                Text(
+                    "Your top songs and artists are determined according to Spotify's affinity algorithm. Spotify's affinity score is based on user behavior, including play count and play frequency. Incognito listening does not factor into affinity scores. Your top genres are the most frequently occuring genres from your top artists"),
+                SizedBox(height: 20),
+              ],
+            ),
+            margin: EdgeInsets.only(left: 20.0, right: 20.0),
+          ),
+          Expanded(
+              child: DefaultTabController(
+                  length: 3,
+                  child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                    Container(
+                        child: TabBar(
+                      tabs: [
+                        Tab(
+                          text: "Top Songs",
+                        ),
+                        Tab(text: "Top Artists"),
+                        Tab(text: "Top Genres")
+                      ],
+                    )),
+                    Flexible(
                       child: (_songData == null) || (_genres == null)
                           ? _loadingBar
                           : TabBarView(
@@ -126,7 +138,10 @@ class _TopMusicPageState extends State<TopMusicPage> {
                                 _itemListView(context, _songData['top_artists']),
                                 _itemListView(context, _genres.keys.toList())
                               ],
-                            ))
-                ])));
+                            ),
+                      fit: FlexFit.loose,
+                    )
+                  ])))
+        ]));
   }
 }
