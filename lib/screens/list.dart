@@ -4,21 +4,19 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 
-
 class ListPage extends StatefulWidget {
-  ListPage ({Key key}) : super(key: key);
+  ListPage({Key key}) : super(key: key);
 
   @override
   _ListPageState createState() => _ListPageState();
 }
 
-
 class _ListPageState extends State<ListPage> {
   dynamic _genres;
   Widget _loadingBar = new Container(
-              height: 20.0,
-              child: new Center(child: new LinearProgressIndicator()),
-            );
+    height: 20.0,
+    child: new Center(child: new LinearProgressIndicator()),
+  );
 
   dynamic _songData;
 
@@ -27,11 +25,11 @@ class _ListPageState extends State<ListPage> {
     setSongData();
     setGenres();
     super.didChangeDependencies();
-}
+  }
 
-   @override
-   void setState(fn) {
-    if(mounted){
+  @override
+  void setState(fn) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -39,16 +37,18 @@ class _ListPageState extends State<ListPage> {
   Future<Map> getSongData() async {
     String token = await LoginHelper.getAuthToken();
     String userID = await LoginHelper.getLoggedInUser();
-    
-    var response = await http.get("${DotEnv().env['P42_API']}/listening-history?user_id=$userID", headers: {'authorization': token});
+
+    var response = await http.get("${DotEnv().env['P42_API']}/listening-history?user_id=$userID",
+        headers: {'authorization': token});
     return json.decode(response.body);
   }
 
   Future<dynamic> getGenres() async {
     String token = await LoginHelper.getAuthToken();
     String userID = await LoginHelper.getLoggedInUser();
-    
-    var response = await http.get("${DotEnv().env['P42_API']}/genres?user_id=$userID", headers: {'authorization': token});
+
+    var response = await http.get("${DotEnv().env['P42_API']}/genres?user_id=$userID",
+        headers: {'authorization': token});
     return json.decode(response.body);
   }
 
@@ -67,57 +67,52 @@ class _ListPageState extends State<ListPage> {
   }
 
   Widget _itemListView(BuildContext context, List data) {
-    
     return ListView.separated(
-        separatorBuilder:(context, index) => Divider(
+      separatorBuilder: (context, index) => Divider(
         color: Colors.blueGrey,
       ),
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          String name = (data[index] is String) ? data[index] : data[index]['name'];
-          return ListTile(
-            title: Text("${index +1} .  $name"),
-            
-          );
-        },
-      );
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        String name = (data[index] is String) ? data[index] : data[index]['name'];
+        return ListTile(
+          title: Text("${index + 1} .  $name"),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length:3,
-      child:Scaffold (
-        appBar: AppBar(
-          title: Text("My Top Music"),
-          bottom:TabBar(
-            tabs: [
-              Tab(text: "Top Songs",),
-              Tab(text: "Top Artists"),
-              Tab(text: "Top Genres")
-            ],
-          )
-        ),
-        body:Flex(
-          direction: Axis.vertical,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-              child: (_songData==null) || (_genres==null) ?
-                _loadingBar :
-                TabBarView(
+        length: 3,
+        child: Scaffold(
+            appBar: AppBar(
+                title: Text("My Top Music"),
+                bottom: TabBar(
+                  tabs: [
+                    Tab(
+                      text: "Top Songs",
+                    ),
+                    Tab(text: "Top Artists"),
+                    Tab(text: "Top Genres")
+                  ],
+                )),
+            body: Flex(
+                direction: Axis.vertical,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  _itemListView(context, _songData['top_songs']),
-                  _itemListView(context, _songData['top_artists']),
-                  _itemListView(context, _genres.keys.toList())
-                ] ,
-              )
-            )
-          ]
-        )
-      )
-    );
+                  Expanded(
+                      child: (_songData == null) || (_genres == null)
+                          ? _loadingBar
+                          : TabBarView(
+                              children: [
+                                _itemListView(context, _songData['top_songs']),
+                                _itemListView(context, _songData['top_artists']),
+                                _itemListView(context, _genres.keys.toList())
+                              ],
+                            ))
+                ])));
   }
 }

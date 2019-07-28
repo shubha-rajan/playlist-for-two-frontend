@@ -41,7 +41,7 @@ class LoginHelper {
     return prefs.setString('imageUrl', imageUrl);
   }
 
-  static Future<bool> clearLoggedInUser()  async {
+  static Future<bool> clearLoggedInUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.clear();
   }

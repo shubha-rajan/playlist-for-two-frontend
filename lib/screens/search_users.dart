@@ -7,7 +7,7 @@ import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/user.dart';
 
 class SearchPage extends StatefulWidget {
-  SearchPage ({Key key}) : super(key: key);
+  SearchPage({Key key}) : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -39,9 +39,9 @@ class _SearchPageState extends State<SearchPage> {
     setUsers();
   }
 
-   @override
-   void setState(fn) {
-    if(mounted){
+  @override
+  void setState(fn) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -50,9 +50,10 @@ class _SearchPageState extends State<SearchPage> {
     String _searchTerm = searchController.text;
     List results = [];
     _users.forEach((user) {
-      if ((_searchTerm.length > 0) && (user['name'].toLowerCase().contains(_searchTerm.toLowerCase()))) {
+      if ((_searchTerm.length > 0) &&
+          (user['name'].toLowerCase().contains(_searchTerm.toLowerCase()))) {
         results.add(user);
-      } 
+      }
     });
     setState(() {
       _searchResults = results;
@@ -61,7 +62,8 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<List> getUsers() async {
     String token = await LoginHelper.getAuthToken();
-    var response = await http.get("${DotEnv().env['P42_API']}/users", headers:{"authorization":token} );
+    var response =
+        await http.get("${DotEnv().env['P42_API']}/users", headers: {"authorization": token});
 
     return json.decode(response.body);
   }
@@ -69,59 +71,52 @@ class _SearchPageState extends State<SearchPage> {
   void setUsers() async {
     var userData = await getUsers();
     setState(() {
-      _users= userData;
+      _users = userData;
     });
   }
 
   void viewUser(userID, name) {
-    Navigator.push(context,
-    MaterialPageRoute(
-      builder: (context) => UserPage(userID: userID, name:name)
-    )
-  ).whenComplete(setUsers);
+    Navigator.push(
+            context, MaterialPageRoute(builder: (context) => UserPage(userID: userID, name: name)))
+        .whenComplete(setUsers);
   }
 
   Widget _searchListView(BuildContext context, List searchResults) {
     return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: searchResults.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(searchResults[index]['name']),
-            onTap: (){
-              viewUser(searchResults[index]['spotify_id'], searchResults[index]['name']);
-            },
-          );
-        },
-      );
-  }
-
-  Widget build(BuildContext context) {
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Find Friends'),    
-      ),
-      body:Column(
-        children: <Widget>[
-              TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  labelText: "Search",
-                  hintText: "Search",
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))
-                  )
-                ),
-              ),
-              Expanded(child: _searchListView(context, _searchResults),)
-              ,
-        ],
-      ) 
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: searchResults.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(searchResults[index]['name']),
+          onTap: () {
+            viewUser(searchResults[index]['spotify_id'], searchResults[index]['name']);
+          },
+        );
+      },
     );
   }
 
-  
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Find Friends'),
+        ),
+        body: Column(
+          children: <Widget>[
+            TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                  labelText: "Search",
+                  hintText: "Search",
+                  prefixIcon: Icon(Icons.search),
+                  border:
+                      OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(25.0)))),
+            ),
+            Expanded(
+              child: _searchListView(context, _searchResults),
+            ),
+          ],
+        ));
+  }
 }
