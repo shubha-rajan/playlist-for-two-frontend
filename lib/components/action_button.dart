@@ -18,7 +18,7 @@ Widget actionButton(BuildContext context, String status, Function requestFriend,
       {
         button = MaterialButton(
           onPressed: removeFriend,
-          child: Text('Cancel Friend Request', style: TextStyle(fontSize: 15)),
+          child: Text('Cancel Request', style: TextStyle(fontSize: 15)),
         );
       }
       break;
@@ -36,7 +36,7 @@ Widget actionButton(BuildContext context, String status, Function requestFriend,
       {
         button = MaterialButton(
           onPressed: acceptFriend,
-          child: Text('Accept Friend Request', style: TextStyle(fontSize: 15)),
+          child: Text('Accept Request', style: TextStyle(fontSize: 15)),
           textColor: Colors.white,
           color: Colors.blueAccent,
         );
