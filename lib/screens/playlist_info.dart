@@ -280,39 +280,39 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
         ),
         body: Flex(direction: Axis.vertical, children: [
           SizedBox(height: 20),
-          Container(
+          Text(_title ?? widget.playlist['description']['title'], style: TextStyle(fontSize: 20)),
+          Flexible(
+              child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Text(_title ?? widget.playlist['description']['title'],
-                    style: TextStyle(fontSize: 20)),
                 SizedBox(height: 10),
                 Text(_description ?? widget.playlist['description']['description'],
                     style: TextStyle(fontSize: 15)),
                 SizedBox(height: 10),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                  MaterialButton(
-                    child: Icon(Icons.delete),
-                    onPressed: _deleteDialog,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                  ),
-                  MaterialButton(
-                    child: Icon(Icons.edit),
-                    onPressed: _editDialog,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                  ),
-                  MaterialButton(
-                    child: Image.asset('graphics/Spotify_Icon_RGB_Black.png', height: 30),
-                    onPressed: _openPlaylistInSpotify,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                    textColor: Colors.white,
-                    color: Colors.green,
-                  )
-                ])
               ],
             ),
-            margin: EdgeInsets.only(left: 20.0, right: 20.0),
-          ),
-          Expanded(
+          )),
+          Flexible(
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            MaterialButton(
+              child: Icon(Icons.delete),
+              onPressed: _deleteDialog,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            ),
+            MaterialButton(
+              child: Icon(Icons.edit),
+              onPressed: _editDialog,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            ),
+            MaterialButton(
+              child: Image.asset('graphics/Spotify_Icon_RGB_Black.png', height: 30),
+              onPressed: _openPlaylistInSpotify,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+              textColor: Colors.white,
+              color: Colors.green,
+            )
+          ])),
+          Flexible(
               child: DefaultTabController(
                   length: 1,
                   child: Column(
