@@ -159,7 +159,7 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
-  void setData() async {
+  Future<void> setData() async {
     dynamic playlists = await getPlaylists();
     String imageUrl = await getImageURL();
     setFriends();

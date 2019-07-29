@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void setData() async {
+  Future<void> setData() async {
     var friends = await getFriends();
     var playlists = await getPlaylists();
     setState(() {
