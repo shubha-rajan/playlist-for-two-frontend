@@ -272,22 +272,23 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
         appBar: AppBar(
           title: Text('Playlists'),
         ),
-        body: Flex(direction: Axis.vertical, children: [
+        body: Column(children: [
           SizedBox(height: 20),
           Text(_title ?? widget.playlist['description']['title'], style: TextStyle(fontSize: 20)),
           Flexible(
+              fit: FlexFit.loose,
+              flex: 2,
               child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 10),
-                Text(_description ?? widget.playlist['description']['description'],
-                    style: TextStyle(fontSize: 15)),
-                SizedBox(height: 10),
-              ],
-            ),
-          )),
-          Flexible(
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 10),
+                    Text(_description ?? widget.playlist['description']['description'],
+                        style: TextStyle(fontSize: 15)),
+                    SizedBox(height: 10),
+                  ],
+                ),
+              )),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             MaterialButton(
               child: Icon(Icons.delete),
               onPressed: _deleteDialog,
@@ -304,12 +305,15 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
               textColor: Colors.white,
               color: Colors.green,
-            )
-          ])),
+            ),
+          ]),
           Flexible(
+              flex: 5,
+              fit: FlexFit.tight,
               child: DefaultTabController(
                   length: 1,
-                  child: Column(
+                  child: Flex(
+                    direction: Axis.vertical,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Container(
@@ -321,13 +325,12 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
                           )),
                         ]),
                       ),
-                      Flexible(
+                      Expanded(
                         child: TabBarView(
                           children: [
                             _playlistTrackView(context, _tracks),
                           ],
                         ),
-                        fit: FlexFit.loose,
                       )
                     ],
                   )))
