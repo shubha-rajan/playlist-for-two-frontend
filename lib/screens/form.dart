@@ -27,7 +27,7 @@ class _PlaylistFormState extends State<PlaylistForm> {
     'acousticness': {'min': 0.0, 'max': 1.0},
     'liveness': {'min': 0.0, 'max': 1.0},
     'instrumentalness': {'min': 0.0, 'max': 1.0},
-    'tempo': {'min': 50.0, 'max': 200.0}
+    'tempo': {'min': 40.0, 'max': 250.0}
   };
 
   bool _filterExplicit = false;
@@ -252,8 +252,8 @@ class _PlaylistFormState extends State<PlaylistForm> {
                 rangeSliderDisplayBuilder(
                     'tempo',
                     'The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration. Values range from 50BPM to 200BPM',
-                    50.0,
-                    200.0),
+                    40.0,
+                    250.0),
                 Text('Loudness'),
                 rangeSliderDisplayBuilder(
                     'loudness',
