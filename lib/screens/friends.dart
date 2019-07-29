@@ -56,7 +56,7 @@ class _FriendsPageState extends State<FriendsPage> {
     }
   }
 
-  void setData() async {
+  Future<void> setData() async {
     var data = await getData();
     setState(() {
       _friends = data['friends'];
