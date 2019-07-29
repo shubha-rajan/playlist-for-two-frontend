@@ -184,29 +184,23 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Edit Playlist Details'),
-            content: Container(
-                height: 400,
-                child: Column(children: <Widget>[
-                  TextField(
-                    controller: titleController,
-                  ),
-                  SizedBox(height: 20),
-                  Flex(mainAxisSize: MainAxisSize.min, direction: Axis.vertical, children: <Widget>[
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: ConstrainedBox(
-                          constraints:
-                              BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 3),
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: TextField(
-                                controller: descriptionController,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                              ))),
-                    )
-                  ]),
-                ])),
+            content:
+                Flex(direction: Axis.vertical, mainAxisSize: MainAxisSize.min, children: <Widget>[
+              TextField(
+                controller: titleController,
+              ),
+              SizedBox(height: 20),
+              Flexible(
+                  fit: FlexFit.loose,
+                  child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      reverse: true,
+                      child: TextField(
+                        controller: descriptionController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                      ))),
+            ]),
             actions: <Widget>[
               FlatButton(
                 child: Text('Cancel'),
