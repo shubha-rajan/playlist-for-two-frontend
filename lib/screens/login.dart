@@ -55,7 +55,10 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Image.asset('graphics/logo-white.png', width: 250),
             isLoading
-                ? _loadingBar
+                ? Column(children: <Widget>[
+                    _loadingBar,
+                    Text("Loading your listening data. This may take a while...")
+                  ])
                 : MaterialButton(
                     onPressed: _loginPressed,
                     child: Text('Log in with Spotify', style: TextStyle(fontSize: 20)),
