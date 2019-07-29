@@ -120,15 +120,15 @@ class _PlaylistFormState extends State<PlaylistForm> {
     });
   }
 
-  Widget rangeSliderDisplayBuilder(feature, description, min, max) {
+  Widget rangeSliderDisplayBuilder(feature, description, min, max, precision) {
     return (Column(children: <Widget>[
       Padding(child: Text(description), padding: EdgeInsets.all(20)),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text("min: ${_features[feature]['min'].toStringAsFixed(2)}"),
+          Text("min: ${_features[feature]['min'].toStringAsFixed(precision)}"),
           SizedBox(width: 10),
-          Text("max: ${_features[feature]['max'].toStringAsFixed(2)}"),
+          Text("max: ${_features[feature]['max'].toStringAsFixed(precision)}"),
         ],
       ),
       RangeSlider(
@@ -137,8 +137,9 @@ class _PlaylistFormState extends State<PlaylistForm> {
         values: RangeValues(_features[feature]['min'], _features[feature]['max']),
         onChanged: (RangeValues values) {
           setState(() {
-            _features[feature]['min'] = values.start;
-            _features[feature]['max'] = values.end;
+            _features[feature]['min'] =
+                num.parse(values.start.toStringAsFixed(precision)).toDouble();
+            _features[feature]['max'] = num.parse(values.end.toStringAsFixed(precision)).toDouble();
           });
         },
       ),
@@ -253,55 +254,64 @@ class _PlaylistFormState extends State<PlaylistForm> {
                     'tempo',
                     'The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration. Values range from 40BPM to 250BPM',
                     40.0,
-                    250.0),
+                    250.0,
+                    0),
                 Text('Loudness'),
                 rangeSliderDisplayBuilder(
                     'loudness',
                     'The overall loudness of a track in decibels (dB). Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks. Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude). Values range between -30 and 0 db.',
                     -30.0,
-                    0.0),
+                    0.0,
+                    0),
                 Text('Danceability'),
                 rangeSliderDisplayBuilder(
                     'danceability',
                     'Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least danceable and 1.0 is most danceable.',
                     0.0,
-                    1.0),
+                    1.0,
+                    2),
                 Text('Valence'),
                 rangeSliderDisplayBuilder(
                     'valence',
                     'A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).',
                     0.0,
-                    1.0),
+                    1.0,
+                    2),
                 Text('Energy'),
                 rangeSliderDisplayBuilder(
                     'energy',
                     'Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale.',
                     0.0,
-                    1.0),
+                    1.0,
+                    2),
                 Text('Acousticness'),
                 rangeSliderDisplayBuilder(
                     'acousticness',
                     'A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 1.0 represents high confidence the track is acoustic. Values range from 0.0 to 1.0. ',
                     0.0,
-                    1.0),
+                    1.0,
+                    2),
                 Text('Speechiness'),
                 rangeSliderDisplayBuilder(
                     'speechiness',
                     'Speechiness detects the presence of spoken words in a track. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks. Values range from 0.0 to 1.0. ',
                     0.0,
-                    1.0),
+                    1.0,
+                    2),
                 Text('Instrumentalness'),
                 rangeSliderDisplayBuilder(
                     'instrumentalness',
                     'Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. Rap or spoken word tracks are clearly “vocal”. The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks, but confidence is higher as the value approaches 1.0. Values range from 0.0 to 1.0. ',
                     0.0,
-                    1.0),
+                    1.0,
+                    2),
                 Text('Liveness'),
                 rangeSliderDisplayBuilder(
                     'liveness',
                     'Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live. Values range from 0.0 to 1.0.',
                     0.0,
-                    1.0),
+                    1.0,
+                    2),
                 SwitchListTile(
                     title: const Text('Filter Explicit Content?'),
                     value: _filterExplicit,
