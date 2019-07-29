@@ -273,54 +273,58 @@ class _UserPageState extends State<UserPage> {
         appBar: AppBar(
           title: Text("Playlist for Two"),
         ),
-        body: Center(
-            child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Padding(
-              child: userCard(
-                  _imageUrl,
-                  widget.name,
-                  _friends['accepted'].length,
-                  _playlists.length,
-                  actionButton(
-                      context, _friendStatus, _requestFriend, _acceptFriend, _removeFriend)),
-              padding: EdgeInsets.all(30)),
-          (_friendStatus == 'accepted')
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    MaterialButton(
-                      onPressed: _customPlaylistForm,
-                      child: Text('New Custom Playlist', style: TextStyle(fontSize: 15)),
-                      textColor: Colors.white,
-                      color: Colors.blueAccent,
-                    ),
-                    SizedBox(height: 10),
-                    MaterialButton(
-                      onPressed: _grabBagPlaylistDialog,
-                      child: Text('New Grab Bag Playlist', style: TextStyle(fontSize: 15)),
-                      textColor: Colors.white,
-                      color: Colors.blueAccent,
-                    ),
-                  ],
-                )
-              : SizedBox(height: 0),
-          Expanded(
-              child: DefaultTabController(
-                  length: 2,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Container(
-                        child: TabBar(tabs: [
-                          Tab(text: "Shared Playlists"),
-                          Tab(text: "${widget.name}'s Friends"),
-                        ]),
-                        width: 400,
-                      ),
-                      Flexible(
-                        child: (_friendStatus == 'pending')
-                            ? _loadingBar
-                            : TabBarView(
+        body: (_friendStatus == 'pending')
+            ? Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                Image.asset('graphics/logo-white.png', width: 250),
+                _loadingBar,
+                Text("Loading user profile...")
+              ])
+            : Center(
+                child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+                Padding(
+                    child: userCard(
+                        _imageUrl,
+                        widget.name,
+                        _friends['accepted'].length,
+                        _playlists.length,
+                        actionButton(
+                            context, _friendStatus, _requestFriend, _acceptFriend, _removeFriend)),
+                    padding: EdgeInsets.all(30)),
+                (_friendStatus == 'accepted')
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          MaterialButton(
+                            onPressed: _customPlaylistForm,
+                            child: Text('New Custom Playlist', style: TextStyle(fontSize: 15)),
+                            textColor: Colors.white,
+                            color: Colors.blueAccent,
+                          ),
+                          SizedBox(height: 10),
+                          MaterialButton(
+                            onPressed: _grabBagPlaylistDialog,
+                            child: Text('New Grab Bag Playlist', style: TextStyle(fontSize: 15)),
+                            textColor: Colors.white,
+                            color: Colors.blueAccent,
+                          ),
+                        ],
+                      )
+                    : SizedBox(height: 0),
+                Expanded(
+                    child: DefaultTabController(
+                        length: 2,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(
+                              child: TabBar(tabs: [
+                                Tab(text: "Shared Playlists"),
+                                Tab(text: "${widget.name}'s Friends"),
+                              ]),
+                              width: 400,
+                            ),
+                            Flexible(
+                              child: TabBarView(
                                 children: [
                                   (_friendStatus == 'accepted')
                                       ? playlistListView(context, _playlists, setData)
@@ -345,10 +349,10 @@ class _UserPageState extends State<UserPage> {
                                             ]),
                                 ],
                               ),
-                        fit: FlexFit.loose,
-                      )
-                    ],
-                  )))
-        ])));
+                              fit: FlexFit.loose,
+                            )
+                          ],
+                        )))
+              ])));
   }
 }
