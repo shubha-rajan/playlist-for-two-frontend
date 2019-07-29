@@ -28,12 +28,13 @@ class AuthHelper {
     }
   }
 
-  static initUriListener(String stateKey, BuildContext context) async {
+  static initUriListener(String stateKey, BuildContext context, Function setLoadingState) async {
     getUriLinksStream().listen((Uri uri) async {
       if (uri?.queryParameters['state'] == stateKey) {
         var code = uri?.queryParameters['code'];
-        await getUser(code, context);
+        setLoadingState();
         closeWebView();
+        await getUser(code, context);
       }
     }, onError: (err) {
       print('got err: $err');

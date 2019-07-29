@@ -251,7 +251,7 @@ class _PlaylistFormState extends State<PlaylistForm> {
                 Text('Tempo'),
                 rangeSliderDisplayBuilder(
                     'tempo',
-                    'The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration. Values range from 50BPM to 200BPM',
+                    'The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration. Values range from 40BPM to 250BPM',
                     40.0,
                     250.0),
                 Text('Loudness'),

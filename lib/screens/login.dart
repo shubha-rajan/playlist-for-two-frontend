@@ -15,6 +15,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   var stateKey = uuid.v4(options: {'rng': UuidUtil.cryptoRNG});
+  bool isLoading = false;
+  Widget _loadingBar = new Container(
+    height: 20.0,
+    child: new Center(child: new LinearProgressIndicator()),
+  );
 
   @override
   void setState(fn) {
@@ -25,11 +30,17 @@ class _LoginPageState extends State<LoginPage> {
 
   initState() {
     super.initState();
-    AuthHelper.initUriListener(stateKey, context);
+    AuthHelper.initUriListener(stateKey, context, _setLoadingState);
   }
 
   _loginPressed() {
     AuthHelper.launchSpotifyLogin(stateKey, context);
+  }
+
+  void _setLoadingState() {
+    setState(() {
+      isLoading = true;
+    });
   }
 
   @override
@@ -43,14 +54,16 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('graphics/logo-white.png', width: 250),
-            MaterialButton(
-                onPressed: _loginPressed,
-                child: Text('Log in with Spotify', style: TextStyle(fontSize: 20)),
-                shape: StadiumBorder(),
-                textColor: Colors.white,
-                color: Colors.green,
-                height: 50,
-                minWidth: 300),
+            isLoading
+                ? _loadingBar
+                : MaterialButton(
+                    onPressed: _loginPressed,
+                    child: Text('Log in with Spotify', style: TextStyle(fontSize: 20)),
+                    shape: StadiumBorder(),
+                    textColor: Colors.white,
+                    color: Colors.green,
+                    height: 50,
+                    minWidth: 300),
           ],
         ),
       ),
