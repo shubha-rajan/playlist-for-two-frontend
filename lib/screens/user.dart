@@ -27,6 +27,7 @@ class _UserPageState extends State<UserPage> {
   String _friendStatus = 'pending';
   String _imageUrl = "http://placekitten.com/300/300";
   dynamic _friends = {'accepted': [], 'requested': [], 'incoming': []};
+  bool _buttonActive = true;
 
   Widget _loadingBar = new Container(
     height: 20.0,
@@ -112,6 +113,9 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<void> _removeFriend() async {
+    setState(() {
+      _buttonActive = false;
+    });
     String authToken = await LoginHelper.getAuthToken();
     String selfID = await LoginHelper.getLoggedInUser();
     dynamic response = await http.post("${DotEnv().env['P42_API']}/remove-friend",
@@ -119,6 +123,7 @@ class _UserPageState extends State<UserPage> {
         body: {'user_id': selfID, 'friend_id': widget.userID});
     if (response.statusCode == 200) {
       setState(() {
+        _buttonActive = true;
         _friendStatus = 'none';
       });
     } else {
@@ -127,6 +132,9 @@ class _UserPageState extends State<UserPage> {
   }
 
   void _requestFriend() async {
+    setState(() {
+      _buttonActive = false;
+    });
     String selfID = await LoginHelper.getLoggedInUser();
     String token = await LoginHelper.getAuthToken();
     var payload = {
@@ -138,12 +146,16 @@ class _UserPageState extends State<UserPage> {
 
     if (response.statusCode == 200) {
       setState(() {
+        _buttonActive = true;
         _friendStatus = 'requested';
       });
     }
   }
 
   void _acceptFriend() async {
+    setState(() {
+      _buttonActive = false;
+    });
     String selfID = await LoginHelper.getLoggedInUser();
     String token = await LoginHelper.getAuthToken();
     var payload = {
@@ -154,6 +166,7 @@ class _UserPageState extends State<UserPage> {
         headers: {"authorization": token}, body: payload);
     if (response.statusCode == 200) {
       setState(() {
+        _buttonActive = true;
         _friendStatus = 'accepted';
       });
     }
@@ -287,8 +300,10 @@ class _UserPageState extends State<UserPage> {
                         widget.name,
                         _friends['accepted'].length,
                         _playlists.length,
-                        actionButton(
-                            context, _friendStatus, _requestFriend, _acceptFriend, _removeFriend)),
+                        _buttonActive
+                            ? actionButton(context, _friendStatus, _requestFriend, _acceptFriend,
+                                _removeFriend)
+                            : MaterialButton(child: CircularProgressIndicator(), onPressed: null)),
                     padding: EdgeInsets.all(30)),
                 (_friendStatus == 'accepted')
                     ? Row(

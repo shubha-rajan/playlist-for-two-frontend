@@ -30,8 +30,10 @@ class _HomePageState extends State<HomePage> {
     'incoming': [],
     'sent': [],
   };
+  bool _friendsLoaded = false;
 
   List<dynamic> _playlists = [];
+  bool _playlistsLoaded = false;
 
   @override
   void didChangeDependencies() {
@@ -54,6 +56,9 @@ class _HomePageState extends State<HomePage> {
         headers: {'authorization': token});
 
     if (response.statusCode == 200) {
+      setState(() {
+        _friendsLoaded = true;
+      });
       return json.decode(response.body);
     } else {
       errorDialog(context, 'An error occurred',
@@ -70,6 +75,9 @@ class _HomePageState extends State<HomePage> {
         headers: {'authorization': token});
 
     if (response.statusCode == 200) {
+      setState(() {
+        _playlistsLoaded = true;
+      });
       return json.decode(response.body);
     } else {
       errorDialog(context, 'An error occurred',
@@ -139,8 +147,24 @@ class _HomePageState extends State<HomePage> {
                       Flexible(
                         child: TabBarView(
                           children: [
-                            friendListView(context, _friends['accepted'], _viewUser, setData),
-                            playlistListView(context, _playlists, setData)
+                            (_friendsLoaded)
+                                ? friendListView(context, _friends['accepted'], _viewUser, setData)
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                        Center(child: CircularProgressIndicator()),
+                                        SizedBox(height: 20),
+                                        Text('Loading Friends...')
+                                      ]),
+                            (_playlistsLoaded)
+                                ? playlistListView(context, _playlists, setData)
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                        Center(child: CircularProgressIndicator()),
+                                        SizedBox(height: 20),
+                                        Text('Loading Playlists...')
+                                      ]),
                           ],
                         ),
                         fit: FlexFit.loose,

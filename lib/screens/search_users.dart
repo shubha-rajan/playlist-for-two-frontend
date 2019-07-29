@@ -19,6 +19,7 @@ class _SearchPageState extends State<SearchPage> {
 
   dynamic _searchResults = [];
   dynamic _users = [];
+  bool _usersLoaded = false;
 
   @override
   void didChangeDependencies() {
@@ -62,10 +63,16 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<List> getUsers() async {
+    setState(() {
+      _usersLoaded = false;
+    });
     String token = await LoginHelper.getAuthToken();
     var response =
         await http.get("${DotEnv().env['P42_API']}/users", headers: {"authorization": token});
     if (response.statusCode == 200) {
+      setState(() {
+        _usersLoaded = true;
+      });
       return json.decode(response.body);
     } else {
       errorDialog(context, 'An error occurred',
@@ -120,7 +127,15 @@ class _SearchPageState extends State<SearchPage> {
                       OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(25.0)))),
             ),
             Expanded(
-              child: _searchListView(context, _searchResults),
+              
+              child: _usersLoaded ? _searchListView(context, _searchResults) :
+              Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                        Center(child: CircularProgressIndicator()),
+                                        SizedBox(height: 20),
+                                        Text('Loading Users...')
+                                      ]),
             ),
           ],
         ));

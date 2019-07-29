@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
-import 'package:playlist_for_two/screens/friends.dart';
+import 'package:playlist_for_two/screens/friend_requests.dart';
 import 'package:playlist_for_two/screens/search_users.dart';
 
 class DrawerListView extends StatefulWidget {
@@ -21,7 +21,7 @@ class _DrawerListViewState extends State<DrawerListView> {
     }
 
     void _getFriendRequests() async {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => FriendsPage()))
+      Navigator.push(context, MaterialPageRoute(builder: (context) => FriendRequestsPage()))
           .whenComplete(widget.refreshCallback);
     }
 

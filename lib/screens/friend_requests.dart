@@ -8,14 +8,14 @@ import 'package:playlist_for_two/screens/search_users.dart';
 import 'package:playlist_for_two/screens/user.dart';
 import 'package:playlist_for_two/components/error_dialog.dart';
 
-class FriendsPage extends StatefulWidget {
-  FriendsPage({Key key}) : super(key: key);
+class FriendRequestsPage extends StatefulWidget {
+  FriendRequestsPage({Key key}) : super(key: key);
 
   @override
-  _FriendsPageState createState() => _FriendsPageState();
+  _FriendRequestsPageState createState() => _FriendRequestsPageState();
 }
 
-class _FriendsPageState extends State<FriendsPage> {
+class _FriendRequestsPageState extends State<FriendRequestsPage> {
   dynamic _friends = {
     'accepted': [],
     'incoming': [],
