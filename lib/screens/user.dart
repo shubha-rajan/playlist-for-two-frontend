@@ -159,7 +159,7 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
-  void setData() async {
+  Future<void> setData() async {
     dynamic playlists = await getPlaylists();
     String imageUrl = await getImageURL();
     setFriends();
@@ -333,8 +333,8 @@ class _UserPageState extends State<UserPage> {
                                                   'Playlists are only visible to users who are friends')
                                             ]),
                                   (_friendStatus == 'accepted')
-                                      ? friendListView(
-                                          context, _friends['accepted'], _friendTapCallback)
+                                      ? friendListView(context, _friends['accepted'],
+                                          _friendTapCallback, setData)
                                       : Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
