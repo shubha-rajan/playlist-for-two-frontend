@@ -96,18 +96,20 @@ class _FriendsPageState extends State<FriendsPage> {
   }
 
   Widget _friendListView(BuildContext context, List data) {
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(json.decode(data[index])['name']),
-          onTap: () {
-            _viewUser(json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
+    return RefreshIndicator(
+        onRefresh: setData,
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(json.decode(data[index])['name']),
+              onTap: () {
+                _viewUser(json.decode(data[index])['friend_id'], json.decode(data[index])['name']);
+              },
+            );
           },
-        );
-      },
-    );
+        ));
   }
 }

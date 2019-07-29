@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                       Flexible(
                         child: TabBarView(
                           children: [
-                            friendListView(context, _friends['accepted'], _viewUser),
+                            friendListView(context, _friends['accepted'], _viewUser, setData),
                             playlistListView(context, _playlists, setData)
                           ],
                         ),

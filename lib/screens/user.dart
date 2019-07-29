@@ -333,8 +333,8 @@ class _UserPageState extends State<UserPage> {
                                                   'Playlists are only visible to users who are friends')
                                             ]),
                                   (_friendStatus == 'accepted')
-                                      ? friendListView(
-                                          context, _friends['accepted'], _friendTapCallback)
+                                      ? friendListView(context, _friends['accepted'],
+                                          _friendTapCallback, setData)
                                       : Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
