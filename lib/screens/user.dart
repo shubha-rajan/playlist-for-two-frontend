@@ -301,8 +301,8 @@ class _UserPageState extends State<UserPage> {
                         _friends['accepted'].length,
                         _playlists.length,
                         _buttonActive
-                            ? actionButton(context, _friendStatus, _requestFriend, _acceptFriend,
-                                _removeFriend)
+                            ? actionButton(context, widget.name, _friendStatus, _requestFriend,
+                                _acceptFriend, _removeFriend)
                             : MaterialButton(child: CircularProgressIndicator(), onPressed: null)),
                     padding: EdgeInsets.all(30)),
                 (_friendStatus == 'accepted')

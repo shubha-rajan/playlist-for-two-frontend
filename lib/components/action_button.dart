@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:playlist_for_two/components/confirm_dialog.dart';
 
-Widget actionButton(BuildContext context, String status, Function requestFriend,
+Widget actionButton(BuildContext context, String name, String status, Function requestFriend,
     Function acceptFriend, Function removeFriend) {
   Widget button;
   switch (status) {
@@ -25,7 +26,13 @@ Widget actionButton(BuildContext context, String status, Function requestFriend,
     case 'accepted':
       {
         button = MaterialButton(
-          onPressed: removeFriend,
+          onPressed: () {
+            confirmDialog(
+                context,
+                "Are you sure you want to remove $name from your friends?",
+                "You will no longer be able to create and share playlists. To connect with $name again, they will need to accept your friend request",
+                removeFriend);
+          },
           child: Text('Remove Friend', style: TextStyle(fontSize: 15)),
           textColor: Colors.white,
           color: Colors.red,
