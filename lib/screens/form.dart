@@ -316,11 +316,14 @@ class _PlaylistFormState extends State<PlaylistForm> {
                     title: const Text('Filter Explicit Content?'),
                     value: _filterExplicit,
                     onChanged: (bool val) => setState(() => _filterExplicit = val)),
-                MaterialButton(
-                  onPressed: _createPlaylist,
-                  child: Text('Make a Playlist!', style: TextStyle(fontSize: 15)),
-                  textColor: Colors.white,
-                  color: Colors.blueAccent,
+                Padding(
+                  child: MaterialButton(
+                    onPressed: _createPlaylist,
+                    child: Text('Make a Playlist!', style: TextStyle(fontSize: 15)),
+                    textColor: Colors.white,
+                    color: Colors.blueAccent,
+                  ),
+                  padding: EdgeInsets.only(top:20, bottom:50),
                 ),
               ]))
             : _loadingBar);

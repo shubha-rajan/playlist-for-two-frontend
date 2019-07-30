@@ -117,25 +117,25 @@ class _SearchPageState extends State<SearchPage> {
         ),
         body: Column(
           children: <Widget>[
-            TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                  labelText: "Search",
-                  hintText: "Search",
-                  prefixIcon: Icon(Icons.search),
-                  border:
-                      OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(25.0)))),
-            ),
+            Padding(
+                child: TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                      labelText: "Search",
+                      hintText: "Search",
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(25.0)))),
+                ),
+                padding: EdgeInsets.all(20)),
             Expanded(
-              
-              child: _usersLoaded ? _searchListView(context, _searchResults) :
-              Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                        Center(child: CircularProgressIndicator()),
-                                        SizedBox(height: 20),
-                                        Text('Loading Users...')
-                                      ]),
+              child: _usersLoaded
+                  ? _searchListView(context, _searchResults)
+                  : Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                      Center(child: CircularProgressIndicator()),
+                      SizedBox(height: 20),
+                      Text('Loading Users...')
+                    ]),
             ),
           ],
         ));

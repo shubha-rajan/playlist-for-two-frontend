@@ -274,19 +274,18 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
         ),
         body: Column(children: [
           SizedBox(height: 20),
-          Text(_title ?? widget.playlist['description']['title'], style: TextStyle(fontSize: 20)),
+          Padding(
+              child: Text(_title ?? widget.playlist['description']['title'],
+                  style: TextStyle(fontSize: 20)),
+              padding: EdgeInsets.all(20)),
           Flexible(
               fit: FlexFit.loose,
               flex: 2,
               child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 10),
-                    Text(_description ?? widget.playlist['description']['description'],
+                child: Padding(
+                    child: Text(_description ?? widget.playlist['description']['description'],
                         style: TextStyle(fontSize: 15)),
-                    SizedBox(height: 10),
-                  ],
-                ),
+                    padding: EdgeInsets.all(20)),
               )),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             MaterialButton(
