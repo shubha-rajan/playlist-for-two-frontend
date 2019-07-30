@@ -11,7 +11,7 @@ Widget actionButton(BuildContext context, String name, String status, Function r
           onPressed: requestFriend,
           child: Text('Add Friend', style: TextStyle(fontSize: 15)),
           textColor: Colors.white,
-          color: Colors.blueAccent,
+          color: Colors.blue[700],
         );
       }
       break;
@@ -45,7 +45,7 @@ Widget actionButton(BuildContext context, String name, String status, Function r
           onPressed: acceptFriend,
           child: Text('Accept Request', style: TextStyle(fontSize: 15)),
           textColor: Colors.white,
-          color: Colors.blueAccent,
+          color: Colors.blue[700],
         );
       }
       break;
