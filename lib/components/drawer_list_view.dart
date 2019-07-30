@@ -57,7 +57,7 @@ class _DrawerListViewState extends State<DrawerListView> {
           },
         ),
         ListTile(
-            leading: Icon(Icons.info),
+            leading: Icon(Icons.info_outline),
             title: Text('Getting Started'),
             onTap: () {
               _getHelp();
