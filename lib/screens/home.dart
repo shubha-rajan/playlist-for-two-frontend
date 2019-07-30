@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _getUserSongs,
                   child: Text('My Top Music', style: TextStyle(fontSize: 15)),
                   textColor: Colors.white,
-                  color: Colors.blueAccent,
+                  color: Colors.blue[700],
                 )),
             padding: EdgeInsets.all(30),
           ),

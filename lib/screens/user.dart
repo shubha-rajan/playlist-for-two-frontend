@@ -313,14 +313,14 @@ class _UserPageState extends State<UserPage> {
                             onPressed: _customPlaylistForm,
                             child: Text('New Custom Playlist', style: TextStyle(fontSize: 15)),
                             textColor: Colors.white,
-                            color: Colors.blueAccent,
+                            color: Colors.blue[700],
                           ),
                           SizedBox(height: 10),
                           MaterialButton(
                             onPressed: _grabBagPlaylistDialog,
                             child: Text('New Grab Bag Playlist', style: TextStyle(fontSize: 15)),
                             textColor: Colors.white,
-                            color: Colors.blueAccent,
+                            color: Colors.blue[700],
                           ),
                         ],
                       )

@@ -287,7 +287,7 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
                         style: TextStyle(fontSize: 15)),
                     padding: EdgeInsets.all(20)),
               )),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
             MaterialButton(
               child: Icon(Icons.delete),
               onPressed: _deleteDialog,

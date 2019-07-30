@@ -35,7 +35,7 @@ Widget actionButton(BuildContext context, String name, String status, Function r
           },
           child: Text('Remove Friend', style: TextStyle(fontSize: 15)),
           textColor: Colors.white,
-          color: Colors.red,
+          color: Colors.deepOrange[900],
         );
       }
       break;
