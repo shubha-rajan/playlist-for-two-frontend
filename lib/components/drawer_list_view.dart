@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:playlist_for_two/helpers/login_helper.dart';
 import 'package:playlist_for_two/screens/friend_requests.dart';
 import 'package:playlist_for_two/screens/search_users.dart';
+import 'package:playlist_for_two/screens/getting_started.dart';
 
 class DrawerListView extends StatefulWidget {
   DrawerListView({Key key, this.refreshCallback}) : super(key: key);
@@ -30,6 +31,11 @@ class _DrawerListViewState extends State<DrawerListView> {
           .whenComplete(widget.refreshCallback);
     }
 
+    void _getHelp() {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HelpPage()))
+          .whenComplete(widget.refreshCallback);
+    }
+
     return ListView(
       children: <Widget>[
         Container(
@@ -51,12 +57,18 @@ class _DrawerListViewState extends State<DrawerListView> {
           },
         ),
         ListTile(
+            leading: Icon(Icons.info),
+            title: Text('Getting Started'),
+            onTap: () {
+              _getHelp();
+            }),
+        ListTile(
           leading: Icon(Icons.exit_to_app),
           title: Text('Log Out'),
           onTap: () {
             _logOutUser();
           },
-        )
+        ),
       ],
     );
   }
