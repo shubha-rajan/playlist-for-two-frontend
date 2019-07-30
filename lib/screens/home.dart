@@ -148,7 +148,21 @@ class _HomePageState extends State<HomePage> {
                         child: TabBarView(
                           children: [
                             (_friendsLoaded)
-                                ? friendListView(context, _friends['accepted'], _viewUser, setData)
+                                ? (_friends['accepted'].length > 0)
+                                    ? friendListView(
+                                        context, _friends['accepted'], _viewUser, setData)
+                                    : Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                            Icon(Icons.search),
+                                            SizedBox(height: 20),
+                                            Padding(
+                                              child: Text(
+                                                  'Hint: Swipe right to open the drawer and tap "Find Friends" to connect with other users!'),
+                                              padding: EdgeInsets.only(left: 70, right: 70),
+                                            )
+                                          ])
                                 : Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
