@@ -62,25 +62,25 @@ class _LoginPageState extends State<LoginPage> {
                 : Padding(
                     padding: EdgeInsets.only(top: 15, bottom: 20),
                     child: MaterialButton(
-                        onPressed: _loginPressed,
-                        child: Row(
+                      onPressed: _loginPressed,
+                      child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                          Text('Log in with Spotify', style: TextStyle(fontSize: 20)),
-                          Padding(
-                              child: Image.asset(
-                                'graphics/Spotify_Icon_RGB_White.png',
-                                height: 40,
-                                width: 40,
-                              ),
-                              padding: EdgeInsets.only(left: 10, right: 10))
-                        ]),
-                        shape: StadiumBorder(),
-                        textColor: Colors.white,
-                        color: Colors.green,
-                        height: 50,
-                        )),
+                            Text('Log in with Spotify', style: TextStyle(fontSize: 20)),
+                            Padding(
+                                child: Image.asset(
+                                  'graphics/Spotify_Icon_RGB_White.png',
+                                  height: 30,
+                                  width: 30,
+                                ),
+                                padding: EdgeInsets.only(left: 10, right: 10))
+                          ]),
+                      shape: StadiumBorder(),
+                      textColor: Colors.white,
+                      color: Colors.green,
+                      height: 50,
+                    )),
           ],
         ),
       ),
