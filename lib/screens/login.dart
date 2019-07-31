@@ -71,8 +71,8 @@ class _LoginPageState extends State<LoginPage> {
                             Padding(
                                 child: Image.asset(
                                   'graphics/Spotify_Icon_RGB_White.png',
-                                  height: 30,
-                                  width: 30,
+                                  height: 35,
+                                  width: 35,
                                 ),
                                 padding: EdgeInsets.only(left: 10, right: 10))
                           ]),
