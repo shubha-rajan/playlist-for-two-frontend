@@ -20,10 +20,7 @@ Requirements to try it out:
 - (Set up the backend)(https://github.com/shubha-rajan/playlist-for-two-backend/) on a local server or deploy it.
 - Create a .env file in the repository with the following keys:
 ``
-SPOTIFY_CLIENT_ID={Your client ID}
-SPOTIFY_REDIRECT_URI=playlistfortwo://login/callback
-SPOTIFY_USER_ID={Your user ID, this will be the ID of the account used to generate playlists}
-P42_API = {The url where your server is running}
+SPOTIFY_CLIENT_ID={Your client ID} . SPOTIFY_REDIRECT_URI=playlistfortwo://login/callback . SPOTIFY_USER_ID={Your user ID, this will be the ID of the account used to generate playlists} . P42_API = {The url where your server is running}
 ``
 - Connect your phone, if you are using a physical phone. Then select your device in your IDE. (If you're using a physical iPhone, you must use Xcode, otherwise, you can use VSCode or Android Studio).
 -If you're using iOS, complete the (code signing steps)[https://medium.com/front-end-weekly/how-to-test-your-flutter-ios-app-on-your-ios-device-75924bfd75a8]
