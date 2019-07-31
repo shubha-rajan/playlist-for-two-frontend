@@ -59,14 +59,28 @@ class _LoginPageState extends State<LoginPage> {
                     _loadingBar,
                     Text("Loading your listening data. This may take a while...")
                   ])
-                : MaterialButton(
-                    onPressed: _loginPressed,
-                    child: Text('Log in with Spotify', style: TextStyle(fontSize: 20)),
-                    shape: StadiumBorder(),
-                    textColor: Colors.white,
-                    color: Colors.green,
-                    height: 50,
-                    minWidth: 300),
+                : Padding(
+                    padding: EdgeInsets.only(top: 15, bottom: 20),
+                    child: MaterialButton(
+                        onPressed: _loginPressed,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                          Text('Log in with Spotify', style: TextStyle(fontSize: 20)),
+                          Padding(
+                              child: Image.asset(
+                                'graphics/Spotify_Icon_RGB_White.png',
+                                height: 40,
+                                width: 40,
+                              ),
+                              padding: EdgeInsets.only(left: 10, right: 10))
+                        ]),
+                        shape: StadiumBorder(),
+                        textColor: Colors.white,
+                        color: Colors.green,
+                        height: 50,
+                        )),
           ],
         ),
       ),
