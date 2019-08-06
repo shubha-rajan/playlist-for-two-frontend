@@ -4,6 +4,10 @@ Playlist for Two is a social music discovery app integrated with Spotify that en
 
 Playlist for Two was developed by Shubha Rajan as a capstone project for [Ada Developers' Academy](https://adadevelopersacademy.org).
 
+## Screenshots
+
+<img src="screenshots/home_screenshot.png" width=250 alt="home page">  <img src="screenshots/drawer_screenshot.png" width=250 alt="side drawer menu">   <img src="screenshots/playlist_screenshot.png" width=250 alt="playlist page">   <img src="screenshots/edit_playlist_screenshot.png" width=250 alt="edit playlist">   <img src="screenshots/custom_playlist1.png" width=250 alt="playlist seed selection">   <img src="screenshots/custom_playlist2.png" width=250 alt="playlist feature selection">
+
 ## Getting Started
 
 Requirements to try it out:
