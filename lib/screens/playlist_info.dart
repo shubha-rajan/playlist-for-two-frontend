@@ -74,7 +74,7 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
       'friend_id': friendID,
       'playlist_uri': widget.playlist['uri']
     };
-    dynamic response = await http.post("${DotEnv().env['P42_API']}/edit-playlist",
+    dynamic response = await http.patch("${DotEnv().env['P42_API']}/playlist",
         headers: {'authorization': token}, body: payload);
     if (response.statusCode != 200) {
       errorDialog(context, 'An error occured',
@@ -84,8 +84,9 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
 
   void _deletePlaylist() async {
     String token = await LoginHelper.getAuthToken();
-    dynamic response = await http.post("${DotEnv().env['P42_API']}/delete-playlist",
-        headers: {'authorization': token}, body: {'playlist_uri': widget.playlist['uri']});
+    String playlistID = widget.playlist['uri'].substring(17);
+    dynamic response = await http.delete("${DotEnv().env['P42_API']}/playlist/$playlistID",
+        headers: {'authorization': token});
     if (response.statusCode == 200) {
       Navigator.pop(context);
     } else {
@@ -117,8 +118,8 @@ class _PlaylistInfoState extends State<PlaylistInfo> {
     String token = await LoginHelper.getAuthToken();
 
     String playlistID = widget.playlist['uri'].substring(17);
-    dynamic response = await http.get("${DotEnv().env['P42_API']}/playlist?playlist_id=$playlistID",
-        headers: {'authorization': token});
+    dynamic response = await http
+        .get("${DotEnv().env['P42_API']}/playlist/$playlistID", headers: {'authorization': token});
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
